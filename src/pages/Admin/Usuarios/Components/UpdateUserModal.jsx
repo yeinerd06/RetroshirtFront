@@ -167,9 +167,7 @@ const UpdateUserModal = ({ openUpdate, handleOpenUpdate, user }) => {
 
   return (
     <Dialog open={openUpdate} handler={handleOpenUpdate} dismiss={{ outsidePress: false }}>
-      {loading && (
-        <Loader />
-      )}
+      <Loader  loading={loading}/>
       <DialogHeader className="bg-blue-900 text-white">EDITAR USUARIO</DialogHeader>
       <form onSubmit={handleRegister}>
         <DialogBody divider style={{ maxHeight: '70vh', overflowY: 'auto' }}>

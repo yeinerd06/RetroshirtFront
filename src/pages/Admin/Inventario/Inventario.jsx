@@ -5,6 +5,7 @@ import {
   Card,
   CardBody,
   CardHeader,
+  IconButton,
   Option,
   Select,
   Typography,
@@ -19,6 +20,7 @@ import UpdateArticuloModal from "./Components/UpdateArticuloModal";
 import AlertaInventario from "./Components/Alerta";
 import { Link, useNavigate } from "react-router-dom";
 import { useProductoContext } from "@/context/ProductoContext";
+import { FaEdit, FaInfoCircle } from "react-icons/fa";
 
 const AdminInventario = () => {
   const { articulos, usuario ,modulo,setLoading} = useUserContext();
@@ -223,16 +225,16 @@ const AdminInventario = () => {
                         className="mb-1 block text-xs font-medium text-blue-gray-600"
                       >
                         <div className="flex space-x-2">
-                          <Button size="sm" color="white" className="" title="Actualizar"
-                            onClick={() => handleOpenUpdate(articulo)}
-                          >
-                            <PencilSquareIcon className="w-5 h-5 text-yellow-900" />
-                          </Button>
-                          <Button size="sm" color="white" className="" title="Informacion"
-                            onClick={() => handleViewArticulo(articulo)}
-                          >
-                            <InformationCircleIcon className="w-5 h-5 text-info-500" />
-                          </Button>
+                      <IconButton className="bg-yellow-900 hover:bg-yellow-700 text-xl" title="Editar"
+                            onClick={() => handleOpenUpdate(articulo)}>
+                            <FaEdit />
+                          </IconButton>
+                         
+                          <IconButton className="bg-blue-900 hover:bg-blue-700 text-xl" title="Informacion"
+                            onClick={() => handleViewArticulo(articulo)}>
+                          <FaInfoCircle />
+                          </IconButton>
+                          
                         </div>
                       </Typography>
                     </div>

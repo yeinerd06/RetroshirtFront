@@ -14,7 +14,7 @@ export const useUserContext = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
 
-  let token = localStorage.getItem("token")
+  let token = localStorage.getItem("token") || ""
   const user = JSON.parse(JSON.stringify(parseJwt(token)));
   const rol = user?.roles[0].nombre?.split("_")[1].toLowerCase();
   const [usuario, setUsuario] = useState(user);
@@ -23,7 +23,6 @@ export const UserProvider = ({ children }) => {
   const [roles, setRoles] = useState([])
   const [articulos, setArticulos] = useState([])
   const [facturas, setFacturas] = useState([])
-  const [facturaImprimir, setFacturaImprimir] = useState([])
   const [proveedores, setProveedores] = useState([])
   const [informesCaja, setInformesCaja] = useState([])
   const [loading, setLoading] = useState(false)
@@ -112,12 +111,12 @@ export const UserProvider = ({ children }) => {
   }, [modulo])
   useEffect(() => {
     listadoArticulos()
-    listadoFacturas()
     listadoProveedores()
-    listadoInformesCaja()
+ 
 
 
   }, [modulo])
+
   const listadoProveedores = async () => {
     try {
       const response = await apiListadoProveedores();

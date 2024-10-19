@@ -9,7 +9,7 @@ import { useMaterialTailwindController,  } from "@/context";
 import { useUserContext } from "@/context/UserContext";
 import LayoutRoutes from "@/Components/LayoutRoutes/LayoutRoutes";
 
-const  DashboardAlmacenista=()=> {
+const  DashboardEstampador=()=> {
   const {modulo}=useUserContext()
   const [controller, ] = useMaterialTailwindController();
   const { sidenavType } = controller;
@@ -44,4 +44,4 @@ const  DashboardAlmacenista=()=> {
 }
 
 
-export default DashboardAlmacenista;
+export default DashboardEstampador;

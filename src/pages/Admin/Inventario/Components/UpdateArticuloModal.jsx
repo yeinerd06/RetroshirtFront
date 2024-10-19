@@ -6,24 +6,22 @@ import {
     DialogFooter,
     DialogHeader,
     Input,
-    Select,
-    Option
+    Typography
 } from "@material-tailwind/react";
+import Select from "react-select";
 import alertify from "alertifyjs";
 import "alertifyjs/build/css/alertify.css";
 import { Loader } from "@/Components/Loader";
 import { useUserContext } from "@/context/UserContext";
+import { useProductoContext } from "@/context/ProductoContext";
 import { apiUpdateArticulo } from "@/Api/Articulo/Articulo";
 
 const UpdateArticuloModal = ({ open, handleOpen, articulo }) => {
-    const { setArticulos, usuario,articulos } = useUserContext();
+    const { categorias, colores, generos } = useProductoContext();
+    const { setArticulos, articulos } = useUserContext();
     const [loading, setLoading] = useState(false);
     const [mensaje, setMensaje] = useState("");
-
     const [imagen, setImagen] = useState(articulo?.imagen);
-
-    
-    
 
     const [formData, setFormData] = useState({
         nombre: articulo?.nombre || "",
@@ -34,8 +32,15 @@ const UpdateArticuloModal = ({ open, handleOpen, articulo }) => {
         categoria: articulo?.categoria || "",
         imagen: null,
         estado: articulo?.estado ?? true,
-        codigo:articulo?.codigo
+        genero: articulo?.genero || "",
+        descripcion: articulo?.descripcion || "",
+        codigo: articulo?.codigo || "",
     });
+
+    const [articuloColores, setArticuloColores] = useState(
+        articulo?.colores || []
+    );
+    const [color, setColor] = useState(null);
 
     useEffect(() => {
         if (articulo) {
@@ -48,10 +53,12 @@ const UpdateArticuloModal = ({ open, handleOpen, articulo }) => {
                 categoria: articulo.categoria,
                 imagen: null,
                 estado: articulo.estado,
-                codigo:articulo?.codigo
+                genero: articulo.genero,
+                descripcion: articulo.descripcion,
+                codigo: articulo.codigo
             });
             setImagen(articulo.imagen);
-
+            setArticuloColores(articulo.colores || []);
         }
     }, [articulo]);
 
@@ -63,10 +70,10 @@ const UpdateArticuloModal = ({ open, handleOpen, articulo }) => {
         }));
     };
 
-    const handleSelectChange = (value) => {
+    const handleSelectChange = (selectedOption, name) => {
         setFormData((prevData) => ({
             ...prevData,
-            categoria: value
+            [name]: selectedOption ? selectedOption.value : "",
         }));
     };
 
@@ -79,178 +86,253 @@ const UpdateArticuloModal = ({ open, handleOpen, articulo }) => {
         setImagen(URL.createObjectURL(file));
     };
 
+    const handleColorSelectChange = (selectedOption) => {
+        setColor(selectedOption);
+    };
+
+    const agregarColor = () => {
+        if (!color) {
+            setMensaje("El campo de Color es obligatorio");
+            return;
+        }
+
+        const exists = articuloColores.some((c) => c.value === color.value);
+        if (exists) {
+            setMensaje("Este color ya ha sido agregado");
+            return;
+        }
+
+        setArticuloColores((prev) => [...prev, color]);
+        setColor(null);
+    };
+
+    const eliminarColor = (index) => {
+        setArticuloColores((prev) => prev.filter((_, i) => i !== index));
+    };
+
     const buscarArticulo = (codigo) => {
-        return articulos.some(articulo => articulo.codigo === codigo);
-      };
+        return articulos.some((articulo) => articulo.codigo === codigo);
+    };
+
     const handleUpdate = (e) => {
         e.preventDefault();
         setMensaje("");
-   
 
-        if (!formData.nombre || !formData.marca || !formData.precio || !formData.cantidadMinima ||  !formData.categoria) {
+        if (
+            !formData.nombre ||
+            !formData.precio ||
+            !formData.cantidadMinima ||
+            !formData.categoria ||
+            !formData.genero ||
+            !formData.descripcion
+        ) {
             setMensaje("Todos los campos son obligatorios");
             return;
         }
 
-        if(!formData.estado && formData.stock>0){
-            setMensaje("No de puede dar de baja el producto, aun tiene stock")
+        if (!imagen) {
+            setMensaje("Seleccione una imagen");
             return;
         }
-        const existeCodigo=buscarArticulo(formData.codigo)
-        if(existeCodigo && articulo.codigo!== formData.codigo){
-        setMensaje("El codigo ya existe ")
-        return
+
+        const existeCodigo = buscarArticulo(formData.codigo);
+        if (existeCodigo && articulo.codigo !== formData.codigo) {
+            setMensaje("El código ya existe");
+            return;
         }
+
+        if (articuloColores.length === 0) {
+            setMensaje("Debe agregar al menos un color");
+            return;
+        }
+
+        const articuloData = {
+            ...formData,
+            imagen: undefined,
+            colores: articuloColores.map((articuloColor) => ({
+                color: {
+                    id: articuloColor.color.id,
+                    nombre: articuloColor.color.nombre,
+                },
+            })),
+        };
+        console.log(articuloData)
+        console.log(articuloColores)
 
         const data = new FormData();
         data.append(
             "articulo",
-            new Blob(
-                [JSON.stringify({ ...formData, imagen: undefined, id: articulo.id })],
-                { type: "application/json" }
-            )
+            new Blob([JSON.stringify(articuloData)], { type: "application/json" })
         );
         if (formData.imagen) {
             data.append("file", formData.imagen);
         }
+       
 
-        console.log(formData)
-        setLoading(true);
-        apiUpdateArticulo(data)
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    setArticulos(prevUsuarios => {
-                        // Actualiza la lista de semestres con el semestre actualizado
-                        return prevUsuarios.map(prevUsuario => {
-                            // Si el semestre actualizado tiene el mismo ID que el semestre existente, devolver el semestre actualizado
-                            if (prevUsuario.id === data?.data?.id) {
-                                return data.data;
-                            } else {
-                                return prevUsuario; // Devuelve el semestre existente sin cambios
-                            }
-                        });
-                    })
-                    alertify.success("Artículo Actualizado");
-                    handleOpen();
-                } else {
-                    setMensaje(data.mensaje);
-                }
-            })
-            .catch((e) => {
-                console.log(e);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        // setLoading(true);
+        // apiUpdateArticulo(data)
+        //     .then((res) => res.json())
+        //     .then((data) => {
+        //         if (data.success) {
+        //             setArticulos((prevArticulos) =>
+        //                 prevArticulos.map((prevArticulo) =>
+        //                     prevArticulo.id === data.data.id ? data.data : prevArticulo
+        //                 )
+        //             );
+        //             alertify.success("Artículo Actualizado");
+        //             handleOpen();
+        //         } else {
+        //             setMensaje(data.mensaje);
+        //         }
+        //     })
+        //     .catch((e) => {
+        //         console.log(e);
+        //     })
+        //     .finally(() => {
+        //         setLoading(false);
+        //     });
     };
+
+    const categoriesOptions = categorias.map((categoria) => ({
+        value: categoria.id,
+        label: categoria.nombre,
+        data: categoria,
+    }));
+
+    const gendersOptions = generos.map((genero) => ({
+        value: genero.valor,
+        label: genero.nombre,
+    }));
+
+    const colorsOptions = colores.map((color) => ({
+        value: color.id,
+        label: color.nombre,
+    }));
 
     return (
         <Dialog open={open} handler={handleOpen} dismiss={{ outsidePress: false }}>
-            {loading && <Loader />}
-            <DialogHeader>Actualizar Artículo</DialogHeader>
+           <Loader loading={loading} />
+            <DialogHeader className="bg-blue-900 text-white">ACTUALIZAR PRODUCTO</DialogHeader>
             <form onSubmit={handleUpdate}>
-                <DialogBody divider style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+                <DialogBody divider style={{ maxHeight: "70vh", overflowY: "auto" }}>
                     <div className="mb-4">
                         <Select
-                            label="Categoría"
-                            name="categoria"
-                            value={formData.categoria}
-                            onChange={handleSelectChange}
-                            required
-                        >
-                            <Option value="LUBRICANTES">LUBRICANTES</Option>
-                            <Option value="FILTROS">FILTROS</Option>
-                            <Option value="REFRIGERANTES">REFRIGERANTES</Option>
-                            <Option value="LIQUIDOS DE FRENO">LIQUIDOS DE FRENO</Option>
-                        </Select>
+                            options={categoriesOptions}
+                            value={categoriesOptions.find(
+                                (option) => option.value === formData?.categoria?.id
+                            )}
+                            onChange={(selectedOption) => handleSelectChange(selectedOption, "categoria")}
+                            placeholder="Categoría"
+                            isSearchable
+                        />
                     </div>
+
+                    <div className="mb-4">
+                        <Select
+                            options={gendersOptions}
+                            value={gendersOptions.find(
+                                (option) => option.value === formData?.genero
+                            )}
+                            onChange={(selectedOption) => handleSelectChange(selectedOption, "genero")}
+                            placeholder="Género"
+                            isSearchable
+                        />
+                    </div>
+
                     <div className="mb-4">
                         <Input
                             label="Nombre"
                             name="nombre"
-                            value={formData.nombre}
+                            value={formData?.nombre}
                             onChange={handleChange}
                             required
                         />
                     </div>
+
                     <div className="mb-4">
                         <Input
-                            label="Marca"
-                            name="marca"
-                            value={formData.marca}
+                            label="Descripción"
+                            name="descripcion"
+                            value={formData?.descripcion}
                             onChange={handleChange}
                             required
                         />
                     </div>
+
                     <div className="mb-4">
                         <Input
-                            label="Código"
+                            label="Referencia"
                             name="codigo"
-                            value={formData.codigo}
+                            value={formData?.codigo}
                             onChange={handleChange}
                             required
                         />
                     </div>
+
                     <div className="mb-4">
                         <Input
                             label="Precio de venta"
                             name="precio"
                             type="number"
-                            value={formData.precio}
+                            value={formData?.precio}
                             onChange={handleChange}
                             min={1}
                             required
                         />
                     </div>
+
                     <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="stock">
-                            Stock
-                        </label>
                         <Input
-                            id="stock"
-                            name="stock"
-                            type="number"
-                            value={formData.stock}
-                            onChange={handleChange}
-                            required
-                            disabled={true}
-                            className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        
-                        <Input
-                            label="Cantidad Minima"
-                            id="cantidadMinima"
+                            label="Cantidad Mínima"
                             name="cantidadMinima"
                             type="number"
-                            value={formData.cantidadMinima}
+                            value={formData?.cantidadMinima}
                             onChange={handleChange}
                             min={1}
                             required
-                            className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                     </div>
 
-                    <div className="mb-4">
-                        <label className="inline-flex items-center">
-                            <input
-                                type="checkbox"
-                                name="estado"
-                                checked={formData.estado}
-                                onChange={handleChange}
-                            />
-                            <span className="ml-2">Disponible</span>
-                        </label>
+                    <div className="mb-4 flex gap-4">
+                        <Select
+                            options={colorsOptions}
+                            value={color}
+                            onChange={handleColorSelectChange}
+                            placeholder="Color de camisa"
+                            isSearchable
+                        />
+                        <Button color="green" onClick={agregarColor}>
+                            Agregar
+                        </Button>
                     </div>
 
+                    {articuloColores.length > 0 && (
+                        <div className="mb-4">
+                            <Typography variant="h6" className="mb-2 font-bold">
+                                Colores agregados:
+                            </Typography>
+                            <ul>
+                                {articuloColores.map((c, index) => (
+                                    <li
+                                        key={index}
+                                        className="flex justify-between items-center mb-2"
+                                    >
+                                        <span>Color: {c.label}</span>
+                                        <Button
+                                            color="red"
+                                            size="sm"
+                                            onClick={() => eliminarColor(index)}
+                                        >
+                                            Eliminar
+                                        </Button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
                     <div className="mb-4">
-                        <Input
-                            label="Imagen"
-                            type="file"
-                            onChange={handleImageChange}
-                        />
+                        <Input label="Imagen" type="file" onChange={handleImageChange}  />
                     </div>
                     {imagen && (
                         <div className="mb-4">
@@ -258,24 +340,19 @@ const UpdateArticuloModal = ({ open, handleOpen, articulo }) => {
                         </div>
                     )}
 
-                  
-                </DialogBody>
-                <DialogFooter>
-                    <div>
-                          {mensaje && (
+                    {mensaje && (
                         <div className="mb-4">
                             <p className="text-center text-red-700">{mensaje}</p>
                         </div>
                     )}
-                    </div>
-                    <div>
-                    <Button variant="text" color="red" onClick={handleOpen} className="mr-1">
+                </DialogBody>
+                <DialogFooter>
+                    <Button  onClick={handleOpen} className="mr-1 bg-red-900 text-white">
                         <span>Cancelar</span>
                     </Button>
-                    <Button variant="gradient" type="submit" color="green">
+                    <Button  type="submit" className="bg-blue-900 text-white">
                         <span>Actualizar</span>
                     </Button>
-                    </div>
                 </DialogFooter>
             </form>
         </Dialog>

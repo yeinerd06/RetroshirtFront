@@ -33,6 +33,8 @@ import { LoginFramer } from "./pages/auth/LoginFramer";
 import { ResetPassword } from "./pages/auth/ResetPassword";
 import ProductGrid from "./pages/Home/Productos";
 import Inicio from "./pages/Admin/Inicio/Inicio";
+import ProductoProveedor from "./pages/Admin/Proveedor/Components/ProductoProveedor";
+import ProveedorPedidos from "./pages/Admin/Proveedor/Pedidos/ProveedorPedidos";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -70,25 +72,32 @@ export const routes = [
         element: <ArticuloDetailView />,
 
       },
-      {
-        icon: <ArchiveBoxArrowDownIcon {...icon} />,
-        name: "facturación",
-        path: "/facturacion",
-        element: <AdminFactura />,
+      // {
+      //   icon: <ArchiveBoxArrowDownIcon {...icon} />,
+      //   name: "Facturas",
+      //   path: "/facturacion",
+      //   element: <AdminFactura />,
 
-      },
-      {
-        icon: <ArchiveBoxXMarkIcon {...icon} />,
-        name: "devoluciones",
-        path: "/devolcuiones",
-        element: <AdminDevolucion />,
+      // },
+      // {
+      //   icon: <ArchiveBoxXMarkIcon {...icon} />,
+      //   name: "devoluciones",
+      //   path: "/devolcuiones",
+      //   element: <AdminDevolucion />,
 
-      },
+      // },
       {
         icon: <InboxArrowDownIcon {...icon} />,
         name: "proveedores",
         path: "/proveedores",
         element: <AdminProveedor />,
+
+      },
+      {
+        icon: "",
+        name: "proveedores",
+        path: "/proveedores/pedidos",
+        element: <ProveedorPedidos />,
 
       },
       // {
@@ -103,6 +112,13 @@ export const routes = [
         name: "proveedor",
         path: "/proveedor/compra/:id",
         element: <Compra />,
+
+      },
+      {
+        icon: "",
+        name: "proveedor",
+        path: "/proveedor/productos/:id",
+        element: <ProductoProveedor />,
 
       },
       {
@@ -129,7 +145,7 @@ export const routes = [
     ]
   },
   {
-    layout: "vendedor",
+    layout: "estampador",
     pages: [
       {
         icon: <HomeIcon {...icon} />,
@@ -137,35 +153,59 @@ export const routes = [
         path: "/inicio",
         element: <Home />,
 
-      }, {
-        icon: <ArchiveBoxIcon {...icon} />,
-        name: "inventario",
-        path: "/inventario",
-        element: <VendedorInventario />,
-
-      }, {
-        icon: <ArchiveBoxArrowDownIcon {...icon} />,
-        name: "facturación",
-        path: "/facturacion",
-        element: <AdminFactura />,
-
       },
-      {
-        icon: "",
-        name: "facturación",
-        path: "/facturacion/factura/:id",
-        element: <DetallesFactura />,
-
-      },
-      {
-        icon: "",
-        name: "venta",
-        path: "/facturacion/venta",
-        element: <Venta />,
-
-      }
     ]
   },
+  {
+    layout: "auxiliar",
+    pages: [
+      {
+        icon: <HomeIcon {...icon} />,
+        name: "inicio",
+        path: "/inicio",
+        element: <Home />,
+
+      },
+    ]
+  },
+  // {
+  //   layout: "vendedor",
+  //   pages: [
+  //     {
+  //       icon: <HomeIcon {...icon} />,
+  //       name: "inicio",
+  //       path: "/inicio",
+  //       element: <Home />,
+
+  //     }, {
+  //       icon: <ArchiveBoxIcon {...icon} />,
+  //       name: "inventario",
+  //       path: "/inventario",
+  //       element: <VendedorInventario />,
+
+  //     }, {
+  //       icon: <ArchiveBoxArrowDownIcon {...icon} />,
+  //       name: "facturación",
+  //       path: "/facturacion",
+  //       element: <AdminFactura />,
+
+  //     },
+  //     {
+  //       icon: "",
+  //       name: "facturación",
+  //       path: "/facturacion/factura/:id",
+  //       element: <DetallesFactura />,
+
+  //     },
+  //     {
+  //       icon: "",
+  //       name: "venta",
+  //       path: "/facturacion/venta",
+  //       element: <Venta />,
+
+  //     }
+  //   ]
+  // },
   {
     layout: "almacenista",
     pages: [
@@ -179,7 +219,7 @@ export const routes = [
         icon: <ArchiveBoxIcon {...icon} />,
         name: "inventario",
         path: "/inventario",
-        element: <AlmacenistaInventario />,
+        element: <AdminInventario />,
 
       }, {
         icon: <InboxArrowDownIcon {...icon} />,
@@ -190,64 +230,51 @@ export const routes = [
       },
       {
         icon: "",
+        name: "proveedores",
+        path: "/proveedores/pedidos",
+        element: <ProveedorPedidos />,
+
+      },
+      {
+        icon: "",
         name: "proveedor",
         path: "/proveedor/compra/:id",
         element: <Compra />,
 
       },
-      , {
-        icon: <ArchiveBoxArrowDownIcon {...icon} />,
-        name: "facturación",
-        path: "/facturacion",
-        element: <AdminFactura />,
-
-      },
       {
         icon: "",
-        name: "facturación",
-        path: "/facturacion/factura/:id",
-        element: <DetallesFactura />,
-
-      },
-      {
-        icon: <BanknotesIcon {...icon} />,
-        name: "informe caja",
-        path: "/informe-caja",
-        element: <InformeCaja />,
+        name: "proveedor",
+        path: "/proveedor/productos/:id",
+        element: <ProductoProveedor />,
 
       },
       
+      // , {
+      //   icon: <ArchiveBoxArrowDownIcon {...icon} />,
+      //   name: "facturación",
+      //   path: "/facturacion",
+      //   element: <AdminFactura />,
+
+      // },
+      // {
+      //   icon: "",
+      //   name: "facturación",
+      //   path: "/facturacion/factura/:id",
+      //   element: <DetallesFactura />,
+
+      // },
+      // {
+      //   icon: <BanknotesIcon {...icon} />,
+      //   name: "informe caja",
+      //   path: "/informe-caja",
+      //   element: <InformeCaja />,
+
+      // },
+      
     ]
   },
-  {
-    layout: "dashboard",
-    pages: [
-      {
-        icon: <HomeIcon {...icon} />,
-        name: "inicio",
-        path: "/inicio",
-        element: <Home />,
-      },
-      {
-        icon: <UserCircleIcon {...icon} />,
-        name: "profile",
-        path: "/profile",
-        element: <Profile />,
-      },
-      {
-        icon: <TableCellsIcon {...icon} />,
-        name: "tables",
-        path: "/tables",
-        element: <Tables />,
-      },
-      {
-        icon: <InformationCircleIcon {...icon} />,
-        name: "notifications",
-        path: "/notifications",
-        element: <Notifications />,
-      },
-    ],
-  },
+ 
   {
     title: "Inicio Retro Shirt",
     layout: "inicio",

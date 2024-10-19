@@ -12,6 +12,7 @@ import {
   SiFila,
 } from "react-icons/si";
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const NeuHero = () => {
   return (
@@ -47,9 +48,11 @@ const Copy = () => {
       <p className="mx-auto my-4 text-white  max-w-3xl text-center text-base leading-relaxed md:my-6 md:text-xl md:leading-relaxed">
         Personalizamos camisetas con diseños retro únicos. Calidad y estilo en cada prenda, hecha especialmente para ti.
       </p>
+      <Link to="/inicio/productos">
       <button className="rounded-lg flex bg-gray-100 p-3 uppercase text-gray-900 transition-colors hover:bg-gray-500">
         <span className="font-bold">Consigue la tuya ya </span><ArrowRight className="ml-2" size={20} />
       </button>
+      </Link>
     </>
   );
 };
@@ -143,6 +146,8 @@ const LogoItemsTop = () => (
     <LogoItem Icon={SiReebok} name="Reebok" />
     <LogoItem Icon={SiNewbalance} name="New Balance" />
     <LogoItem Icon={SiFila} name="Fila" />
+    <LogoItem Icon={SiNike} name="Nike" />
+    <LogoItem Icon={SiAdidas} name="Adidas" />
   </>
 );
 
@@ -153,8 +158,11 @@ const LogoItemsBottom = () => (
     <LogoItem Icon={SiAdidas} name="Adidas" />
     <LogoItem Icon={SiPuma} name="Puma" />
     <LogoItem Icon={SiUnderarmour} name="Under Armour" />
-    <LogoItem Icon={SiFila} name="Fila" />
+    <LogoItem Icon={SiReebok} name="Reebok" />
     <LogoItem Icon={SiNewbalance} name="New Balance" />
+    <LogoItem Icon={SiFila} name="Fila" />
+    <LogoItem Icon={SiNike} name="Nike" />
+    <LogoItem Icon={SiAdidas} name="Adidas" />
     
    
   </>

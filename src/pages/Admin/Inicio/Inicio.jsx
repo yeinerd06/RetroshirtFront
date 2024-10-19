@@ -1,236 +1,226 @@
 import React, { useState } from 'react';
 import { useProductoContext } from '@/context/ProductoContext';
-import { apiSaveCategoria } from '@/Api/Articulo/Categoria';
-import { apiSaveTalla } from '@/Api/Articulo/Talla';
-import { apiSaveColor } from '@/Api/Articulo/Color';
 import { useUserContext } from '@/context/UserContext';
-import { Input, Button, Card, CardBody, Typography } from "@material-tailwind/react";
+import {
+  Input,
+  Button,
+  Card,
+  CardBody,
+  Typography,
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+  IconButton
+} from "@material-tailwind/react";
+import { PlusIcon } from "@heroicons/react/24/solid";
+import { apiSaveColor } from '@/Api/Articulo/Color';
+import { apiSaveTalla } from '@/Api/Articulo/Talla';
+import { apiSaveCategoria } from '@/Api/Articulo/Categoria';
+import alertify from "alertifyjs";
+import "alertifyjs/build/css/alertify.css";
+import EmpresaInfo from './Empresa/EmpresaInfo';
+// Modal Component for Form Input
+const RegistroModal = ({ isOpen, onClose, title, onSubmit, children }) => (
+  <Dialog open={isOpen} handler={onClose}>
+    <DialogHeader>{title}</DialogHeader>
+    <DialogBody>{children}</DialogBody>
+    <DialogFooter>
+      <Button onClick={onClose} variant="text" color="red">
+        Cancelar
+      </Button>
+      <Button onClick={onSubmit} color="green">
+        Registrar
+      </Button>
+    </DialogFooter>
+  </Dialog>
+);
+
+// List Component with Add Button
+const ListadoConBoton = ({ title, items, onAddClick, renderItem }) => (
+  <Card className="shadow-lg">
+    <CardBody>
+      <div className="flex justify-between items-center">
+        <Typography variant="h5" className="mb-4 font-bold">{title}</Typography>
+        {!title.includes("Tallas") &&(
+           <IconButton className="bg-blue-900 hover:bg-blue-700" onClick={onAddClick}>
+           <PlusIcon className="h-5 w-5 text-white" />
+         </IconButton>
+        )}
+       
+      </div>
+      <ul className="space-y-2">
+        {items.map(renderItem)}
+      </ul>
+    </CardBody>
+  </Card>
+);
 
 const Inicio = () => {
   const { categorias, tallas, colores, setCategorias, setTallas, setColores } = useProductoContext();
   const { setLoading } = useUserContext();
-  const [nombreCategoria, setNombreCategoria] = useState('');
-  const [descripcionCategoria, setDescripcionCategoria] = useState('');
-  const [nombreTalla, setNombreTalla] = useState('');
-  const [nombreColor, setNombreColor] = useState('');
-  const [hexColor, setHexColor] = useState('#FFFFFF');
 
-  const handleSaveCategoria = async (e) => {
-    e.preventDefault();
+  const [modalState, setModalState] = useState({
+    categoria: false,
+    talla: false,
+    color: false,
+  });
+
+  const [formData, setFormData] = useState({
+    nombreCategoria: '',
+    descripcionCategoria: '',
+    nombreTalla: '',
+    nombreColor: '',
+    hexColor: '#FFFFFF'
+  });
+
+  const handleModalOpen = (key) => setModalState({ ...modalState, [key]: !modalState[key] });
+  const handleInputChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const handleSave = async (type) => {
     setLoading(true);
+    const dataMap = {
+      categoria: {
+        api: apiSaveCategoria,
+        data: {
+          nombre: formData.nombreCategoria.toUpperCase(),
+          descripcion: formData.descripcionCategoria.toUpperCase()
+        },
+        update: setCategorias,
+        items: categorias,
+        resetFields: { nombreCategoria: '', descripcionCategoria: '' }
+      },
+      talla: {
+        api: apiSaveTalla,
+        data: { nombre: formData.nombreTalla.toUpperCase() },
+        update: setTallas,
+        items: tallas,
+        resetFields: { nombreTalla: '' }
+      },
+      color: {
+        api: apiSaveColor,
+        data: { nombre: formData.nombreColor.toUpperCase(), color: formData.hexColor },
+        update: setColores,
+        items: colores,
+        resetFields: { nombreColor: '', hexColor: '#FFFFFF' }
+      }
+    };
+
+    const { api, data, update, items, resetFields } = dataMap[type];
+
     try {
-      const newCategoria = { 
-        nombre: nombreCategoria.toUpperCase(), 
-        descripcion: descripcionCategoria.toUpperCase() 
-      };
-      apiSaveCategoria(newCategoria)
-        .then((res) => res.json())
-        .then((data) => {
-          if (!data.success) {
-            alert('Error al registrar la Categoría');
-          } else {
-            setCategorias([...categorias, newCategoria]);
-            alert('Categoría registrada correctamente!');
-            setNombreCategoria('');
-            setDescripcionCategoria('');
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-      })
-      .finally(() => {
-          setLoading(false);
-      });
-        
+      const response = await api(data);
+      const result = await response.json();
+      if (result.success) {
+        update([...items, data]);
+        alertify.success(`${type.charAt(0).toUpperCase() + type.slice(1)} registrada correctamente!`);
+
+        setFormData({ ...formData, ...resetFields });
+        handleModalOpen(type);
+      } else {
+        alert(`Error al registrar ${type}`);
+      }
     } catch (error) {
-      console.error('Error al registrar la categoría:', error);
-      alert('Error al registrar la categoría');
+      console.error(`Error al registrar ${type}:`, error);
+      alert(`Error al registrar ${type}`);
+    } finally {
       setLoading(false);
-    } 
-  };
-
-  const handleSaveTalla = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const newTalla = { nombre: nombreTalla.toUpperCase() };
-      apiSaveTalla(newTalla)
-        .then((res) => res.json())
-        .then((data) => {
-          if (!data.success) {
-            alert('Error al registrar la Talla');
-          } else {
-            setTallas([...tallas, newTalla]);
-            alert('Talla registrada correctamente!');
-            setNombreTalla('');
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-      })
-      .finally(() => {
-          setLoading(false);
-      });
-    } catch (error) {
-      console.error('Error al registrar la talla:', error);
-      alert('Error al registrar la talla');
-    } 
-  };
-
-  const handleSaveColor = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const newColor = { 
-        nombre: nombreColor.toUpperCase(), 
-        color: hexColor 
-      };
-      apiSaveColor(newColor)
-        .then((res) => res.json())
-        .then((data) => {
-          if (!data.success) {
-            alert('Error al registrar el Color');
-          } else {
-            setColores([...colores, newColor]);
-            alert('Color registrado correctamente!');
-            setNombreColor('');
-            setHexColor('#FFFFFF');
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-      })
-      .finally(() => {
-          setLoading(false);
-      });
-    } catch (error) {
-      console.error('Error al registrar el color:', error);
-      alert('Error al registrar el color');
-    } 
+    }
   };
 
   return (
-    <div className="mx-auto p-4">
-      {/* Sección de formularios en 3 columnas */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="shadow-lg flex flex-col justify-between h-full">
-          <CardBody className="flex flex-col justify-between">
-            <div>
-              <Typography variant="h5" className="mb-4 font-bold">Registrar Categoría</Typography>
-              <form onSubmit={handleSaveCategoria} className="space-y-4">
-                <Input
-                  label="Nombre de la Categoría"
-                  value={nombreCategoria}
-                  onChange={(e) => setNombreCategoria(e.target.value.toUpperCase())}
-                  size="lg"
-                />
-                <Input
-                  label="Descripción"
-                  value={descripcionCategoria}
-                  onChange={(e) => setDescripcionCategoria(e.target.value.toUpperCase())}
-                  size="lg"
-                />
-              </form>
-            </div>
-            <Button type="submit" onClick={handleSaveCategoria} color="blue" fullWidth className="mt-4 bg-green-700 hover:bg-green-900">
-              Registrar Categoría
-            </Button>
-          </CardBody>
-        </Card>
-
-        <Card className="shadow-lg flex flex-col justify-between h-full">
-          <CardBody className="flex flex-col justify-between">
-            <div>
-              <Typography variant="h5" className="mb-4 font-bold">Registrar Talla</Typography>
-              <form onSubmit={handleSaveTalla} className="space-y-4">
-                <Input
-                  label="Nombre de la Talla"
-                  value={nombreTalla}
-                  onChange={(e) => setNombreTalla(e.target.value.toUpperCase())}
-                  size="lg"
-                />
-                <Input
-                  label="Descripción (Opcional)"
-                  size="lg"
-                />
-              </form>
-            </div>
-            <Button type="submit" onClick={handleSaveTalla}  fullWidth className="mt-4 bg-green-700 hover:bg-green-900">
-              Registrar Talla
-            </Button>
-          </CardBody>
-        </Card>
-
-        <Card className="shadow-lg flex flex-col justify-between h-full">
-          <CardBody className="flex flex-col justify-between">
-            <div>
-              <Typography variant="h5" className="mb-4 font-bold">Registrar Color</Typography>
-              <form onSubmit={handleSaveColor} className="space-y-4">
-                <Input
-                  label="Nombre del Color"
-                  value={nombreColor}
-                  onChange={(e) => setNombreColor(e.target.value.toUpperCase())}
-                  size="lg"
-                />
-                <div>
-                  <input
-                    type="color"
-                    value={hexColor}
-                    onChange={(e) => setHexColor(e.target.value)}
-                    className="w-full h-10 p-1 rounded-md cursor-pointer border border-gray-300"
-                  />
-                </div>
-              </form>
-            </div>
-            <Button type="submit" onClick={handleSaveColor} color="blue" fullWidth className="mt-4 bg-green-700 hover:bg-green-900">
-              Registrar Color
-            </Button>
-          </CardBody>
-        </Card>
-      </div>
-
-      {/* Sección de listados en 3 columnas */}
+    <div>
+      <EmpresaInfo />
+      {/* List Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-        <Card className="shadow-lg">
-          <CardBody>
-            <Typography variant="h5" className="mb-4 font-bold">Listado de Categorías</Typography>
-            <ul className="space-y-2">
-              {categorias.map((c) => (
-                <li key={c.id} className="border-b pb-2">{c.nombre}</li>
-              ))}
-            </ul>
-          </CardBody>
-        </Card>
+        <ListadoConBoton
+          title="Listado de Categorías"
+          items={categorias}
+          onAddClick={() => handleModalOpen('categoria')}
+          renderItem={(c) => <li key={c.id} className="border-b pb-2">{c.nombre}</li>}
+        />
+        <ListadoConBoton
+          title="Listado de Colores"
+          items={colores}
+          onAddClick={() => handleModalOpen('color')}
+          renderItem={(col) => (
+            <li key={col.id} className="border-b pb-2 grid grid-cols-3 items-center">
+              <span className="col-span-1">{col.nombre}</span>
+              <span className="col-span-1 w-4 h-4 rounded-full" style={{ backgroundColor: col.color }}></span>
+              <span className="col-span-1 text-gray-500">{col.color}</span>
+            </li>
+          )}
+        />
 
-        <Card className="shadow-lg">
-          <CardBody>
-            <Typography variant="h5" className="mb-4 font-bold">Listado de Tallas</Typography>
-            <ul className="space-y-2">
-              {tallas.map((t) => (
-                <li key={t.id} className="border-b pb-2">{t.nombre}</li>
-              ))}
-            </ul>
-          </CardBody>
-        </Card>
-
-        <Card className="shadow-lg">
-          <CardBody>
-            <Typography variant="h5" className="mb-4 font-bold">Listado de Colores</Typography>
-            <ul className="space-y-2">
-              {colores.map((col) => (
-                <li key={col.id} className="border-b pb-2 flex items-center">
-                  <span className="mr-2">{col.nombre}</span>
-                  <span
-                    className="w-4 h-4 rounded-full"
-                    style={{ backgroundColor: col.color }}
-                  ></span>
-                  <span className="ml-2 text-gray-500">{col.color}</span>
-                </li>
-              ))}
-            </ul>
-          </CardBody>
-        </Card>
+        <ListadoConBoton
+          title="Listado de Tallas"
+          items={tallas}
+          onAddClick={() => handleModalOpen('talla')}
+          renderItem={(t) => <li key={t.id} className="border-b pb-2">{t.nombre}</li>}
+        />
       </div>
+
+      {/* Modal Registrar Categoría */}
+      <RegistroModal
+        isOpen={modalState.categoria}
+        onClose={() => handleModalOpen('categoria')}
+        title="Registrar Categoría"
+        onSubmit={() => handleSave('categoria')}
+      >
+        <Input
+          label="Nombre de la Categoría"
+          name="nombreCategoria"
+          value={formData.nombreCategoria}
+          onChange={handleInputChange}
+          size="lg"
+        />
+        <Input
+          label="Descripción"
+          name="descripcionCategoria"
+          value={formData.descripcionCategoria}
+          onChange={handleInputChange}
+          size="lg"
+        />
+      </RegistroModal>
+
+      {/* Modal Registrar Color */}
+      <RegistroModal
+        isOpen={modalState.color}
+        onClose={() => handleModalOpen('color')}
+        title="Registrar Color"
+        onSubmit={() => handleSave('color')}
+      >
+        <Input
+          label="Nombre del Color"
+          name="nombreColor"
+          value={formData.nombreColor}
+          onChange={handleInputChange}
+          size="lg"
+        />
+        <input
+          type="color"
+          name="hexColor"
+          value={formData.hexColor}
+          onChange={handleInputChange}
+          className="w-full h-10 p-1 rounded-md cursor-pointer border border-gray-300"
+        />
+      </RegistroModal>
+
+      {/* Modal Registrar Talla */}
+      <RegistroModal
+        isOpen={modalState.talla}
+        onClose={() => handleModalOpen('talla')}
+        title="Registrar Talla"
+        onSubmit={() => handleSave('talla')}
+      >
+        <Input
+          label="Nombre de la Talla"
+          name="nombreTalla"
+          value={formData.nombreTalla}
+          onChange={handleInputChange}
+          size="lg"
+        />
+      </RegistroModal>
     </div>
   );
 };

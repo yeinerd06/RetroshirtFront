@@ -5,20 +5,61 @@ import DashboardVendendor from "./layouts/DashboardVendendor";
 import { UserProvider } from "./context/UserContext";
 import Inicio from "./layouts/Inicio";
 import { ProductoProvider } from "./context/ProductoContext";
+import DashboardEstampador from "./layouts/DashboardEstampador";
+import DashboardAuxiliar from "./layouts/DashboardAuxiliar";
+import { ProveedorProvider } from "./context/ProveedorContext";
 
 function App() {
   return (
     <Routes>
-
-      <Route path="/admin/*" element={<UserProvider>
-        <ProductoProvider>
-          <DashboardAdmin />
-        </ProductoProvider>
-
-      </UserProvider>} />
-      <Route path="/almacenista/*" element={<UserProvider><DashboardAlmacenista /></UserProvider>} />
-      <Route path="/vendedor/*" element={<UserProvider><DashboardVendendor /></UserProvider>} />
-
+      <Route
+        path="/admin/*"
+        element={
+          <ProveedorProvider>
+            <UserProvider>
+              <ProductoProvider>
+                <DashboardAdmin />
+              </ProductoProvider>
+            </UserProvider>
+          </ProveedorProvider>
+        }
+      />
+      <Route
+        path="/almacenista/*"
+        element={
+          <ProveedorProvider>
+            <UserProvider>
+            <ProductoProvider>
+              <DashboardAlmacenista />
+              </ProductoProvider>
+            </UserProvider>
+          </ProveedorProvider>
+        }
+      />
+      <Route
+        path="/vendedor/*"
+        element={
+          <UserProvider>
+            <DashboardVendendor />
+          </UserProvider>
+        }
+      />
+      <Route
+        path="/estampador/*"
+        element={
+          <UserProvider>
+            <DashboardEstampador />
+          </UserProvider>
+        }
+      />
+      <Route
+        path="/auxiliar/*"
+        element={
+          <UserProvider>
+            <DashboardAuxiliar />
+          </UserProvider>
+        }
+      />
 
       <Route path="/inicio/*" element={<Inicio />} />
       <Route path="*" element={<Navigate to="/inicio" replace />} />

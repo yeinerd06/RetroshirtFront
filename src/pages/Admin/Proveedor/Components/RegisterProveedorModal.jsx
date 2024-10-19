@@ -88,10 +88,8 @@ const RegisterProveedorModal = ({ open, handleOpen }) => {
 
   return (
     <Dialog open={open} handler={handleOpen} dismiss={{ outsidePress: false }}>
-      {loading && (
-        <Loader />
-      )}
-      <DialogHeader>Registrar Proveedor</DialogHeader>
+      <Loader  loading={loading}/>
+      <DialogHeader className="bg-blue-900 text-white uppercase">Registrar Proveedor</DialogHeader>
       <form onSubmit={handleRegister}>
         <DialogBody divider style={{ maxHeight: '70vh', overflowY: 'auto' }}>
          
@@ -180,10 +178,10 @@ const RegisterProveedorModal = ({ open, handleOpen }) => {
         <DialogFooter>
 
 
-          <Button variant="text" color="red" onClick={handleOpen} className="mr-1">
+          <Button  onClick={handleOpen} className="mr-1 bg-red-900 text-white">
             <span>Cancelar</span>
           </Button>
-          <Button variant="gradient" type="submit" color="green">
+          <Button type="submit" className="bg-blue-900 text-white">
             <span>Registrar</span>
           </Button>
         </DialogFooter>

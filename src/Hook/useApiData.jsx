@@ -12,7 +12,7 @@ export const useApiData = (apiFunction, setData, delay = 0) => {
 
         const response = await apiFunction();
         const data = await response.json();
-        console.log(data)
+        //console.log(data)
         if (isMounted && data.success) {
           setData(data.data);
         }

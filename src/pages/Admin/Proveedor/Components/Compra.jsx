@@ -1,436 +1,429 @@
-import { SquaresPlusIcon, PlusIcon, DeviceTabletIcon, MinusIcon, PlusCircleIcon, TrashIcon } from "@heroicons/react/24/solid";
+// imports
+import { PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
 import {
-    Button, Card, CardHeader, CardBody, Dialog, DialogBody, DialogFooter, DialogHeader, Typography, Input,
-    Option,
-    Select,
+  Button,
+  DialogFooter,
+  Typography,
+  Input,
+  IconButton,
+  Checkbox,
+  Textarea,
 } from "@material-tailwind/react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import SelectReact from "react-select";
 import { useUserContext } from "@/context/UserContext";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { Loader } from "@/Components/Loader";
 import { apiSaveFactura } from "@/Api/Factura/Factura";
 import alertify from "alertifyjs";
 import "alertifyjs/build/css/alertify.css";
-import RegisterArticuloModal from "../../Inventario/Components/RegisterArticuloModal";
+import DatosProveedor from "./DatosProveedor";
+import { useProductoContext } from "@/context/ProductoContext";
+import { apiSavePedidoProveedor } from "@/Api/Pedido/PedidoProveedor";
+import { useProveedorContext } from "@/context/ProveedorContext";
+
+// Subcomponente para el manejo de la tabla de tallas por color
+const TallasTable = ({
+  tallasOptions,
+  prodIndex,
+  colorIndex,
+  colorObj,
+  handleTallaCantidadChange,
+}) => {
+  return (
+    <div className="border-t mt-2 pt-2">
+      <Typography variant="h6">Color: {colorObj.color.label}</Typography>
+      <div className="overflow-x-auto">
+        <table className="table-auto border-collapse w-full">
+          <thead>
+            <tr>
+              {tallasOptions.map((talla) => (
+                <th
+                  key={talla.value}
+                  className="px-1 py-1 text-center border"
+                  style={{ width: "40px" }}
+                >
+                  <Typography variant="small" className="font-bold">
+                    {talla.label}
+                  </Typography>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              {tallasOptions.map((talla) => (
+                <td key={talla.value} className="px-1 py-1 text-center border">
+                  <Input
+                    type="number"
+                    min="0"
+                    value={colorObj.tallas[talla.value] || 0}
+                    onChange={(e) =>
+                      handleTallaCantidadChange(
+                        prodIndex,
+                        colorIndex,
+                        talla.value,
+                        e.target.value
+                      )
+                    }
+                    className="w-12 p-1 text-center border rounded"
+                    style={{ fontSize: "12px" }}
+                  />
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
 const Compra = () => {
+  const { id } = useParams();
+  const [loading, setLoading] = useState(false);
+  const {listadoProveedoresPedidos}=useProveedorContext()
+  const { colores, tallas } = useProductoContext();
+  const {
+    articulos,
+    setFacturas,
+    usuario,
+    modulo,
+    proveedores,
+    listadoArticulos,
+  } = useUserContext();
+  const [selectedProducto, setSelectedProducto] = useState(null);
+  const [listaProductos, setListaProductos] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [codigoFactura, setCodigoFactura] = useState("");
+  const [valorFactura, setValorFactura] = useState(null);
+  const [proveedor, setProveedor] = useState({});
+  const [pedidoPendiente, setPedidoPendiente] = useState(true); // Estado del pedido pendiente
+  const [fechaPedido, setFechaPedido] = useState(""); // Estado de la fecha de pedido
+  const [fechaEntrega, setFechaEntrega] = useState(""); // Estado de la fecha de entrega
+  const [nota, setNota] = useState(""); // Estado de la nota
+  const navigate = useNavigate();
 
-    const { id } = useParams();
+  useEffect(() => {
+    if (proveedores) {
+      const proveedorEncontrado = proveedores.find((p) => p.id === Number(id));
+      setProveedor(proveedorEncontrado);
+    }
+  }, [proveedores, id]);
 
-    const [loading, setLoading] = useState(false)
-    const { articulos, setFacturas, usuario, modulo, proveedores,listadoArticulos } = useUserContext();
-    const [selectedProducto, setSelectedProducto] = useState(null);
-    const [cantidad, setCantidad] = useState(1);
-    const [listaProductos, setListaProductos] = useState([]);
-    const [total, setTotal] = useState(0);
-    const [mensaje, setMensaje] = useState([]);
-    const navigate = useNavigate()
-    const [valorFactura, setValorFactura] = useState([])
-    const [codigoFactura, setCodigoFactura] = useState([])
-    const [proveedor, setProveedor] = useState([])
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => {
-        setOpen(!open);
-    };
-    useEffect(() => {
-        if (proveedores) {
-            const proveedor = proveedores.find(p => p.id === Number(id));
-            console.log(proveedor)
-            setProveedor(proveedor)
+  const productosOptions = useMemo(
+    () =>
+      proveedor?.productos?.map((producto) => ({
+        id: producto.id,
+        label: ` ${producto.articulo.nombre} - ${
+          producto.articulo.categoria?.nombre
+        } - $${producto.articulo.precio.toFixed(2)}`,
+        precio: producto.articulo.precio,
+        articulo: producto.articulo,
+      })),
+    [proveedor]
+  );
+
+
+
+  const tallasOptions = useMemo(
+    () =>
+      tallas?.map((talla) => ({
+        value: talla.id,
+        label: talla.nombre,
+      })),
+    [tallas]
+  );
+
+  const handleProductoChange = (selectedOption) => {
+    setSelectedProducto(selectedOption);
+  };
+
+  const handleColorSelectChange = useCallback((index, selectedColors) => {
+    setListaProductos((prevLista) =>
+      prevLista.map((producto, i) => {
+        if (i === index) {
+          const updatedColores = selectedColors.map((color) => ({
+            color: color,
+            tallas: {},
+          }));
+          return { ...producto, colores: updatedColores };
         }
-
-    }, [proveedores, id])
-    const handleProductoChange = (selectedOption) => {
-        setSelectedProducto(selectedOption);
-    };
-
-    const handleCantidadChange = (e) => {
-        const nuevaCantidad = Number(e.target.value);
-        setCantidad(nuevaCantidad);
-        // if (selectedProducto && nuevaCantidad > selectedProducto.articulo.stock) {
-        //     setCantidad(selectedProducto.articulo.stock);
-        // } else {
-        //     setCantidad(nuevaCantidad);
-        // }
-    };
-
-    const handleAgregarProducto = () => {
-        if (selectedProducto && cantidad > 0) {
-            setListaProductos((prevLista) => {
-                const productoExistente = prevLista.find(
-                    (p) => p.value === selectedProducto.value
-                );
-                if (productoExistente) {
-                    const nuevaCantidad = productoExistente.cantidad + cantidad;
-                    return prevLista.map((p) =>
-                        p.value === selectedProducto.value
-                            ? { ...p, cantidad: nuevaCantidad }
-                            : p
-                    );
-                    // if (nuevaCantidad >= selectedProducto.articulo.stock) {
-                    //     return prevLista.map((p) =>
-                    //         p.value === selectedProducto.value
-                    //             ? { ...p, cantidad: nuevaCantidad }
-                    //             : p
-                    //     );
-                    // } else {
-                    //     return prevLista;
-                    // }
-                } else {
-                    return [...prevLista, { ...selectedProducto, cantidad }];
-                }
-            });
-            setSelectedProducto(null);
-            setCantidad(1);
-            // if (cantidad <= selectedProducto.articulo.stock) {
-
-            // }
-        }
-    };
-
-    const handleEliminarProducto = (productoId) => {
-        setListaProductos((prevLista) =>
-            prevLista.filter((p) => p.value !== productoId)
-        );
-    };
-
-
-
-    const handleIncrement = (productoId) => {
-        setListaProductos((prevLista) =>
-            prevLista.map((p) =>
-                p.value === productoId
-                    ? { ...p, cantidad: p.cantidad + 1 }
-                    : p
-            )
-        );
-    };
-
-    const handleDecrement = (productoId) => {
-        setListaProductos((prevLista) =>
-            prevLista.map((p) =>
-                p.value === productoId && p.cantidad > 1
-                    ? { ...p, cantidad: p.cantidad - 1 }
-                    : p
-            )
-        );
-    };
-
-    useEffect(() => {
-    
-        setTotal(valorFactura);
-    }, [valorFactura]);
-
-    const productosOptions = articulos
-        //.filter((producto) => producto.estado && producto.stock>0)
-        .map((producto) => ({
-            value: producto.id,
-            label: `${producto.codigo}- ${producto.nombre} - $${producto.precio.toFixed(2)}`,
-            precio: producto.precio,
-            articulo: producto,
-        }));
-
-    const handleSaveFactura = (e) => {
-        e.preventDefault();
-        setMensaje("");
-        const factura = {
-            usuario,
-            precioTotal: total,
-            productos: listaProductos,
-            proveedor: proveedor,
-            codigoFactura:"F-"+codigoFactura,
-            tipoFactura:{
-                id:2,
-                nombre:"COMPRA"
-            }
-
-        };
-
-        const productosConCantidadCero = listaProductos.filter(
-            (producto) => producto.cantidad === 0
-        );
-        if (codigoFactura.length <= 0) {
-            setMensaje(
-                "Ingrese el codigo de la factura de compra"
-            );
-
-            return;
-        }
-        if (total <= 0) {
-            setMensaje(
-                "Ingrese el total de la factura de compra"
-            );
-
-            return;
-        }
-        if (productosConCantidadCero.length > 0) {
-            setMensaje(
-                "La cantidad de algunos productos es 0. Por favor, verifica antes de continuar."
-            );
-
-            return;
-        }
-
-        console.log(factura);
-
-        setLoading(true);
-        apiSaveFactura(factura)
-            .then((res) => res.json())
-            .then((data) => {
-                console.log(data);
-                if (data.success) {
-                    setFacturas((prevUsuarios) => [...prevUsuarios, data.data]);
-                    alertify.success("Factura creada correctamente")
-                    listadoArticulos()
-                    navigate("/" + modulo + "/proveedores")
-
-
-                } else {
-                    alertify.error("Error en el servidor")
-                }
-            })
-            .catch((e) => {
-                console.log(e);
-                alertify.error("Error en el servidor")
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    };
-
-    const formatCurrency = (value) => {
-        return value.toLocaleString("es-CO", {
-            style: "currency",
-            currency: "COP",
-        });
-    };
-
-
-
-
-    const DatosProveedor = () => {
-        return (
-            <div className="p-1 bg-white shadow-md rounded-md">
-                <Typography className=" text-2xl font-bold text-gray-900">
-                    Datos Proveedor:
-                </Typography>
-
-                <div className="mb-6 grid grid-cols-1 sm:grid-cols-4 gap-6">
-                    <div>
-                        <Typography className="font-medium text-gray-700">Nombre:</Typography>
-                        <Typography className="text-lg text-gray-900">{proveedor?.nombre || 'N/A'}</Typography>
-                    </div>
-                    <div>
-                        <Typography className="font-medium text-gray-700">Documento:</Typography>
-                        <Typography className="text-lg text-gray-900">{proveedor?.documento || 'N/A'}</Typography>
-                    </div>
-                    <div>
-                        <Typography className="font-medium text-gray-700">Email:</Typography>
-                        <Typography className="text-lg text-gray-900">{proveedor?.email || 'N/A'}</Typography>
-                    </div>
-                    <div>
-                        <Typography className="font-medium text-gray-700">Teléfono:</Typography>
-                        <Typography className="text-lg text-gray-900">{proveedor?.telefono || 'N/A'}</Typography>
-                    </div>
-                </div>
-
-            </div>
-        );
-    };
-
-
-    return (
-        <div className="mb-4 mt-6">
-            {loading && <Loader />}
-            <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm mb-6">
-                <DialogHeader className="bg-gray-800 text-white flex items-center justify-between">
-                    <Typography variant="h2" className="text-lg sm:text-2xl">
-                        Registrar Factura de compra
-                    </Typography>
-                    <Link to={"/" + modulo + "/proveedores"}>
-                        <Button variant="text" color="red" className="ml-auto">
-                            <i className="fa fa-times-circle" aria-hidden="true"></i>
-                        </Button>
-                    </Link>
-                </DialogHeader>
-                <form onSubmit={handleSaveFactura}>
-                    <DialogBody divider>
-                        <CardBody>
-                            <DatosProveedor />
-                            <hr />
-                            <br />
-                            <div className="flex flex-col sm:flex-row items-center mb-4 space-y-4 sm:space-y-0 sm:space-x-4">
-                                <div className="flex items-center w-full sm:w-1/2">
-                                    <label className="mr-2 w-1/4 sm:w-auto">Producto</label>
-                                    <SelectReact
-                                        options={productosOptions}
-                                        value={selectedProducto}
-                                        onChange={handleProductoChange}
-                                        placeholder="Buscar por codigo"
-                                        className="w-full"
-                                        noOptionsMessage={() => <Button type="button" onClick={handleOpen} color="green" size="sm" className="text-white">Registrar Articulo</Button>}
-                                    />
-                                </div>
-                                <div className="flex items-center w-full sm:w-1/3">
-                                    <label className="mr-2 w-1/3 sm:w-auto">Cantidad</label>
-                                    <Input
-                                        type="number"
-                                        value={cantidad}
-                                        onChange={handleCantidadChange}
-                                        min="1"
-                                        className="w-full"
-                                    />
-                                </div>
-                                <Button
-                                    variant="gradient"
-                                    color="black"
-                                    onClick={handleAgregarProducto}
-                                    className="w-full sm:w-auto"
-                                >
-                                    <PlusIcon className="h-5 w-5 ml-2" />
-                                </Button>
-                            </div>
-                            <div className="mt-1 mb-1">
-                                <p className="text-center text-red">{mensaje}</p>
-                            </div>
-
-
-                            <div className="overflow-auto">
-                                <table className="w-full mt-4">
-                                    <thead className="bg-gray-800 text-white">
-                                        <tr>
-                                            <th className="p-2">Stock</th>
-                                            <th className="p-2">Imagen</th>
-                                            <th className="p-2">Producto</th>
-                                            <th className="p-2">Cantidad</th>
-                                            <th className="p-2">Nueva Cantidad</th>
-                                            <th className="p-2">Acción</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {listaProductos?.map((producto, index) => (
-                                            <tr key={index} className="border-b">
-                                                <td className="p-2">{producto.articulo.stock}</td>
-                                                <td className="p-2 flex">
-                                                    {producto?.articulo?.imagen && (
-                                                        <img
-                                                            src={producto?.articulo?.imagen}
-                                                            alt={"Imagen del articulo"}
-                                                            size="sm"
-                                                            className="rounded-none w-16 h-16 object-cover"
-                                                        />
-                                                    )}
-                                                </td>
-                                                <td className="p-2">
-
-                                                    {producto.articulo.codigo} - {producto.articulo.nombre}</td>
-                                                <td className="p-2">
-                                                    <div className="flex items-center text-center" >
-                                                        <Button
-                                                            variant="text"
-                                                            color="blue"
-                                                            onClick={() => handleDecrement(producto.value)}
-                                                        >
-                                                            <MinusIcon className="h-5 w-5" />
-                                                        </Button>
-                                                        <p style={{ width: '60px', }}>{producto.cantidad}</p>
-                                                        {/* <Input
-                                                            className=""
-                                                                type="number"
-                                                                value={producto.cantidad}
-                                                                min="1"
-                                                                max={producto.producto.stock}
-                                                                onChange={(e) => {
-                                                                    const nuevaCantidad = Number(e.target.value);
-                                                                    if (nuevaCantidad <= producto.producto.stock) {
-                                                                        handleCantidadModificar(
-                                                                            producto.value,
-                                                                            nuevaCantidad
-                                                                        );
-                                                                    }
-                                                                }}
-                                                                disabled
-                                                            /> */}
-                                                        <Button
-                                                            variant="text"
-                                                            color="blue"
-                                                            onClick={() => handleIncrement(producto.value)}
-                                                        >
-                                                            <PlusCircleIcon className="h-5 w-5" />
-                                                        </Button>
-                                                    </div>
-                                                </td>
-                                                <td className="p-2">
-                                                    nuevo
-                                                </td>
-                                                <td className="p-2">
-                                                    <Button
-                                                        variant="text"
-                                                        color="red"
-                                                        onClick={() =>
-                                                            handleEliminarProducto(producto.value)
-                                                        }
-                                                    >
-                                                        <TrashIcon className="h-5 w-5" />
-                                                    </Button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <hr />
-
-                            
-                            <div className="flex justify-end items-center mt-4">
-                                <Typography color="blue-gray">
-                                    IVA: {formatCurrency(total * 0.19)}
-                                </Typography>
-                            </div>
-                            <div className="flex w-2/1 justify-end items-center mt-4">
-                           
-                                <div>
-                                    <label className="mr-2 w-1/3 sm:w-auto"> Código Factura</label>
-                                    <Input
-                                        type="number"
-                                        value={codigoFactura}
-                                        onChange={(e) => setCodigoFactura(e.target.value)}
-                                        min="1"
-                                        className="w-full"
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            
-                            <div className="flex w-2/1 justify-end items-center mt-4">
-                           
-                                <div>
-                                    <label className="mr-2 w-1/3 sm:w-auto"> Precio Factura</label>
-                                    <Input
-                                        type="number"
-                                        value={valorFactura}
-                                        onChange={(e) => setValorFactura(e.target.value)}
-                                        min="1"
-                                        className="w-full"
-                                        required
-                                    />
-                                </div>
-                            </div>
-
-
-
-                        </CardBody>
-                    </DialogBody>
-                    <DialogFooter className="flex justify-end">
-                        <Button variant="gradient" color="green" type="submit">
-                            GUARDAR
-                        </Button>
-                    </DialogFooter>
-                </form>
-            </Card>
-            <RegisterArticuloModal open={open} handleOpen={handleOpen} />
-        </div>
+        return producto;
+      })
     );
+  }, []);
+
+  const handleTallaCantidadChange = useCallback(
+    (prodIndex, colorIndex, tallaId, cantidad) => {
+      setListaProductos((prevLista) =>
+        prevLista.map((producto, i) => {
+          if (i === prodIndex) {
+            const updatedColores = producto.colores.map((color, j) => {
+              if (j === colorIndex) {
+                const updatedTallas = { ...color.tallas, [tallaId]: cantidad };
+                return { ...color, tallas: updatedTallas };
+              }
+              return color;
+            });
+            return { ...producto, colores: updatedColores };
+          }
+          return producto;
+        })
+      );
+    },
+    []
+  );
+
+  const handleAgregarProducto = () => {
+    if (selectedProducto) {
+       // console.log(selectedProducto)
+      setListaProductos((prevLista) => [
+        ...prevLista,
+        {
+          ...selectedProducto,
+          cantidad: 0,
+          colores: [],
+        },
+      ]);
+      setSelectedProducto(null);
+    }
+  };
+
+  const handleEliminarProducto = (index) => {
+    setListaProductos((prevLista) => prevLista.filter((_, i) => i !== index));
+  };
+
+  const handleSaveFactura = (e) => {
+    e.preventDefault();
+    if(listaProductos.length===0){
+      alertify.error("Debe selecionar un producto del proveedor")
+      return
+    }
+
+     // Validar que cada producto tenga al menos una talla con cantidad mayor a 1
+      const hasValidProducts = listaProductos.every(producto => 
+        producto.colores.some(colorObj =>
+            Object.values(colorObj.tallas).some(cantidad => parseInt(cantidad) > 0)
+        )
+    );
+
+    if (!hasValidProducts) {
+        alertify.error("Cada producto debe tener al menos una talla con cantidad mayor a 1.");
+        return; // No permite continuar si la validación falla
+    }
+
+     // Crear la estructura correcta para ProveedorPedidoArticulo
+     const productosPedido = listaProductos.flatMap((producto) => 
+      producto.colores.flatMap((colorObj) =>
+          Object.entries(colorObj.tallas).map(([tallaId, cantidad]) => ({
+              proveedorArticulo: { id: producto.id }, // referencia al artículo
+              color: { id: colorObj.color.value }, // referencia al color
+              talla: { id: parseInt(tallaId) }, // referencia a la talla
+              cantidad: parseInt(cantidad) // la cantidad de la talla para ese color
+          }))
+      )
+  );
+
+    console.log(productosPedido);
+
+    const pedido = {
+      usuario,
+      precioTotal: total,
+      productos: productosPedido,
+      proveedor,
+      codigoFactura,
+      pedidoPendiente,
+      total:valorFactura,
+      fechaPedido: pedidoPendiente ? fechaPedido : null, // Solo si el pedido está pendiente
+      fechaEntrega: pedidoPendiente ? fechaEntrega : null, // Solo si el pedido está pendiente
+      nota,
+    };
+
+
+    console.log(pedido);
+
+    setLoading(true);
+    apiSavePedidoProveedor(pedido)
+      .then(res=>res.json())
+      .then(data=>{
+        console.log(data)
+        if(data.success){
+          listadoProveedoresPedidos()
+          alertify.success("Pedido enviado con éxito")
+          navigate(-1)
+        }
+      
+        
+      })
+      .catch(err=>{
+        console.log(err)  
+        setLoading(false)
+      })
+      .finally(()=>{
+        setLoading(false)
+      })
+  };
+
+  return (
+    <>
+      <Loader loading={loading} />
+      <div className="flex justify-between">
+        <Typography variant="h2" className="text-lg sm:text-2xl uppercase">
+          Factura de compra
+        </Typography>
+        <Link to={"/" + modulo + "/proveedores"}>
+          <i
+            className="fa fa-times-circle text-xl mr-3 text-red-900"
+            aria-hidden="true"
+          ></i>
+        </Link>
+      </div>
+      <DatosProveedor proveedor={proveedor} />
+      <form onSubmit={handleSaveFactura}>
+        <div className="flex flex-col sm:flex-row items-center mb-4 space-y-4 sm:space-y-0 sm:space-x-4">
+          <div className="flex items-center w-full sm:w-1/2">
+            <label className="mr-2 w-1/4 sm:w-auto">Producto</label>
+            <SelectReact
+              options={productosOptions}
+              value={selectedProducto}
+              onChange={handleProductoChange}
+              placeholder="Buscar por código"
+              className="w-full"
+            />
+          </div>
+          <IconButton
+            className="bg-green-900 hover:bg-green-700"
+            onClick={handleAgregarProducto}
+          >
+            <PlusIcon className="h-5 w-5" />
+          </IconButton>
+        </div>
+
+        <div className="border shadow-lg rounded-lg p-4 mt-4">
+          {listaProductos?.map((producto, prodIndex) => (
+            <div key={prodIndex} className="border-b mb-4 pb-4">
+              <div className="grid grid-cols-4 items-center ">
+                <div>
+                  {producto?.articulo?.imagen && (
+                    <img
+                      src={producto?.articulo?.imagen}
+                      alt="Imagen del artículo"
+                      size="sm"
+                      className="rounded-none w-16 h-16 object-cover"
+                    />
+                  )}
+                </div>
+                <div>{producto.articulo.nombre}</div>
+                <div className="flex gap-4">
+                  <SelectReact
+                    isMulti
+                    options={producto.articulo.colores?.map(
+                      (articuloColor) => ({
+                        value: articuloColor.color.id,
+                        label: articuloColor.color.nombre,
+                      })
+                    )}
+                    value={producto.colores.map((c) => c.color)}
+                    onChange={(selectedColors) =>
+                      handleColorSelectChange(prodIndex, selectedColors)
+                    }
+                    placeholder="Seleccionar colores"
+                  />
+                </div>
+                <IconButton
+                  variant="text"
+                  color="red"
+                  onClick={() => handleEliminarProducto(prodIndex)}
+                >
+                  <TrashIcon className="h-5 w-5" />
+                </IconButton>
+              </div>
+
+              {producto.colores.map((colorObj, colorIndex) => (
+                <TallasTable
+                  key={colorIndex}
+                  tallasOptions={tallasOptions}
+                  prodIndex={prodIndex}
+                  colorIndex={colorIndex}
+                  colorObj={colorObj}
+                  handleTallaCantidadChange={handleTallaCantidadChange}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-6 mt-9">
+          <div>
+            <Input
+              label="N° Factura"
+              type="text"
+              value={codigoFactura}
+              onChange={(e) => setCodigoFactura(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <Input
+              label="Precio Factura"
+              type="number"
+              value={valorFactura}
+              onChange={(e) => setValorFactura(e.target.value)}
+              required
+            />
+          </div>
+        </div>
+
+        {/* Pedido Pendiente */}
+        {/* <div className="flex ">
+          <Checkbox
+            label="Pedido Pendiente"
+            checked={pedidoPendiente}
+            onChange={(e) => setPedidoPendiente(e.target.checked)}
+          />
+        </div> */}
+
+        {/* Mostrar campos si Pedido Pendiente es true */}
+        {pedidoPendiente && (
+          <div className="grid sm:grid-cols-2 gap-6">
+            <div className="mt-4">
+              <label className="mr-2">Fecha de Pedido</label>
+              <Input
+                type="date"
+                value={fechaPedido}
+                onChange={(e) => setFechaPedido(e.target.value)}
+                required={pedidoPendiente}
+              />
+            </div>
+            <div className="mt-4">
+              <label className="mr-2">Fecha de Entrega</label>
+              <Input
+                type="date"
+                value={fechaEntrega}
+                onChange={(e) => setFechaEntrega(e.target.value)}
+                required={pedidoPendiente}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Nota */}
+        <div className="mt-4">
+          <Textarea
+            label="Nota"
+            value={nota}
+            onChange={(e) => setNota(e.target.value)}
+          />
+        </div>
+        <div className="flex justify-end items-center mt-4">
+          <Button className="bg-green-900 text-white" type="submit">
+            GUARDAR FACTURA
+          </Button>
+        </div>
+      </form>
+    </>
+  );
 };
 
 export default Compra;

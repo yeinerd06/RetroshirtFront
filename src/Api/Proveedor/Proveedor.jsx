@@ -26,6 +26,21 @@ async function apiSaveProveedor(proveedor) {
     );
     return result;
   }
+  async function apiSaveProveedorArticulo(proveedorArticulo) {
+    const token = localStorage.getItem("token");
+    const result = await fetch(
+      urlBackend+"proveedor/articulo/save",
+      {
+        method: "POST",
+        body:JSON.stringify(proveedorArticulo),
+        headers:{
+            "Authorization":"Bearer "+token,
+            "Content-Type": "application/json"
+        }
+      }
+    );
+    return result;
+  }
   async function apiUpdateProveedor(articulo) {
     const token = localStorage.getItem("token");
     const result = await fetch(
@@ -42,4 +57,4 @@ async function apiSaveProveedor(proveedor) {
     return result;
   }
 
-  export {apiListadoProveedores,apiSaveProveedor,apiUpdateProveedor}
+  export {apiListadoProveedores,apiSaveProveedor,apiUpdateProveedor,apiSaveProveedorArticulo}

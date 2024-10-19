@@ -6,7 +6,7 @@ const LayoutRoutes = ({ children }) => {
         <div className="mb-4 grid grid-cols-1 gap-6 mt-6 ">
 
 
-            <div className="overflow-hidden h-[70vh] bg-white max-h-screen overflow-y-auto">
+            <div className="overflow-hidden h-[90vh] bg-white max-h-screen overflow-y-auto">
 
                 {children}
             </div>

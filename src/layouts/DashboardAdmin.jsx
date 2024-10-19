@@ -1,20 +1,17 @@
 import { Routes, Route } from "react-router-dom";
-import { Cog6ToothIcon } from "@heroicons/react/24/solid";
-import { IconButton } from "@material-tailwind/react";
 import {
   Sidenav,
   DashboardNavbar,
-  Configurator,
   Footer,
 } from "@/widgets/layout";
 import routes from "@/routes";
-import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
+import { useMaterialTailwindController,  } from "@/context";
 import { useUserContext } from "@/context/UserContext";
 import LayoutRoutes from "@/Components/LayoutRoutes/LayoutRoutes";
 
 const  DashboardAdmin=()=> {
   const {modulo}=useUserContext()
-  const [controller, dispatch] = useMaterialTailwindController();
+  const [controller, ] = useMaterialTailwindController();
   const { sidenavType } = controller;
 
   return (

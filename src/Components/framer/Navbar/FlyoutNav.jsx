@@ -20,10 +20,10 @@ const LINKS = [
     href: "/inicio/productos",
     // component: PricingContent,
   },
-   {
-    text: "Cotización",
-    href: "#cotizacion",
-  },
+  //  {
+  //   text: "Cotización",
+  //   href: "#cotizacion",
+  // },
   // {
   //   text: "Quiénes Somos",
   //   href: "/quienes-somos",
@@ -408,13 +408,13 @@ const MobileMenu = () => {
       <AnimatePresence>
         {open && (
           <motion.nav
-            initial={{ x: "100vw" }}
+            initial={{ x: "90vw" }}
             animate={{ x: 0 }}
-            exit={{ x: "100vw" }}
+            exit={{ x: "90vw" }}
             transition={{ duration: 0.15, ease: "easeOut" }}
             className="fixed left-0 top-0 flex h-screen w-full flex-col bg-white"
           >
-            <div className="flex items-center bg-green-900 justify-between p-6">
+            <div className="flex items-center bg-blue-900 justify-between p-6">
               <Link href={"/"} className="flex items-center gap-2 text-blod text-2xl font-semibold">
               <Brand />RETRO SHIRT
                           </Link>
@@ -435,7 +435,7 @@ const MobileMenu = () => {
                 </MobileMenuLink>
               ))}
             </div>
-            <div className="flex text-white justify-end bg-green-900 p-6"  onClick={() => setOpen(false)}>
+            <div className="flex text-white justify-end bg-blue-900 p-6"  onClick={() => setOpen(false)}>
               <CTAs  />
             </div>
           </motion.nav>

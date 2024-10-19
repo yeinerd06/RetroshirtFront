@@ -96,16 +96,14 @@ const Form = () => {
       viewport={{ once: true }}
       className="flex items-center justify-center pb-4 "
     >
-       {loading && (
-          <Loader/>
-        )}
+         <Loader loading={loading}/>
       {/* Ajuste del contenedor para que sea más ancho */}
       <div className="mx-auto my-auto w-full max-w-xl px-4 md:pr-0">
         <motion.h1
           variants={primaryVariants}
           className="mb-2 text-center text-gray-100 text-4xl font-semibold"
         >
-          RETRO SHIRT
+          BIENVENIDO
         </motion.h1>
         <motion.p variants={primaryVariants} className="mb-8 text-gray-100 text-center">
           Ingresa tus datos para iniciar sesión
@@ -161,12 +159,12 @@ const Form = () => {
           >
             Iniciar Sesion
           </motion.button>
-          <motion.p variants={primaryVariants} className="text-xs text-center mt-3">
+          {/* <motion.p variants={primaryVariants} className="text-xs text-center mt-3">
             Olvido su contraseña?{" "}
             <Link className="text-indigo-600 underline" to="/inicio/recuperar-contraseña">
               Recuperar Contraseña
             </Link>
-          </motion.p>
+          </motion.p> */}
         </form>
       </div>
     </motion.div>
@@ -175,11 +173,11 @@ const Form = () => {
 
 const SupplementalContent = () => {
   return (
-    <div className="group sticky top-4 m-4 h-80 overflow-hidden rounded-3xl rounded-tl-[4rem] bg-slate-950 md:h-[calc(100vh_-_2rem)]">
+    <div className="group sticky bg-blue-900 top-4 m-4 h-80 overflow-hidden rounded-3xl rounded-tl-[4rem] bg-slate-950 md:h-[calc(100vh_-_2rem)]">
       <img
         alt="An example image"
-        src="/img/retro-shirt.jpg"
-        className="h-full w-full bg-white object-cover transition-all duration-500 group-hover:scale-105 group-hover:opacity-50"
+        src="/img/retro-shirt.png"
+        className="h-full w-full  object-cover transition-all duration-500 group-hover:scale-105 group-hover:opacity-50"
       />
 
       <div className="absolute right-2 top-4 z-10">

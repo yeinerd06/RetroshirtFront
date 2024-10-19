@@ -174,25 +174,25 @@ const RegisterArticuloModal = ({ open, handleOpen }) => {
         );
         data.append("file", formData.imagen);
         
-        // setLoading(true);
-        // apiSaveArticulo(data)
-        //     .then((res) => res.json())
-        //     .then((data) => {
-        //         if (data.success) {
-        //             setArticulos((prevArticulos) => [...prevArticulos, data.data]);
-        //             alertify.success("Artículo Registrado");
-        //             handleOpen();
-        //             resetForm();
-        //         } else {
-        //             setMensaje(data.mensaje);
-        //         }
-        //     })
-        //     .catch((e) => {
-        //         console.log(e);
-        //     })
-        //     .finally(() => {
-        //         setLoading(false);
-        //     });
+        setLoading(true);
+        apiSaveArticulo(data)
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.success) {
+                    setArticulos((prevArticulos) => [...prevArticulos, data.data]);
+                    alertify.success("Artículo Registrado");
+                    handleOpen();
+                    resetForm();
+                } else {
+                    setMensaje(data.mensaje);
+                }
+            })
+            .catch((e) => {
+                console.log(e);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     };
 
     return (
@@ -259,7 +259,7 @@ const RegisterArticuloModal = ({ open, handleOpen }) => {
 
                     <div className="mb-4">
                         <Input
-                            label="Código"
+                            label="Referencia"
                             name="codigo"
                             value={formData.codigo}
                             onChange={handleChange}

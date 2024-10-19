@@ -9,7 +9,7 @@ export function Footer({ brandName, brandLink, routes }) {
     <footer className="py-2">
       <div className="flex w-full flex-wrap items-center justify-center gap-6 px-2 md:justify-between">
         <Typography variant="small" className="font-normal text-inherit">
-          &copy; {year}, Para Car y Motos la Frontera{" "}
+          &copy; {year}, RETRO SHIRT{" "}
           
         </Typography>
         <ul className="flex items-center gap-4">
@@ -36,7 +36,7 @@ Footer.defaultProps = {
   brandName: "Creative Tim",
   brandLink: "https://www.creative-tim.com",
   routes: [
-    { name: "Terminos y condiciones", path: "#" },
+    // { name: "Terminos y condiciones", path: "#" },
     { name: "Contacto", path: "#" },
     // { name: "Blog", path: "https://www.creative-tim.com/blog" },
     // { name: "License", path: "https://www.creative-tim.com/license" },
