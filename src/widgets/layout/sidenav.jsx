@@ -1,7 +1,17 @@
-// Importaciones necesarias
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronLeft,
+  ChevronRight,
+  LayoutDashboard,
+  ShoppingBag,
+  Users,
+  FileText,
+  Settings,
+  HelpCircle,
+  LogOut,
+} from "lucide-react";
 import {
   IconButton,
   List,
@@ -10,12 +20,16 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useMaterialTailwindController, setOpenSidenav } from "@/context";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
-// Función auxiliar para manejar el click en los ListItem
-function handleListItemClick(dispatch, layout, path, navigate) {
-  setOpenSidenav(dispatch, false);
-  navigate(`/${layout}${path}`);
-}
+// Items de menú con sus iconos y rutas
+const menuItems = [
+  { icon: LayoutDashboard, name: "Dashboard", href: "/admin/dashboard" },
+  { icon: ShoppingBag, name: "Productos", href: "/admin/products" },
+  { icon: Users, name: "Usuarios", href: "/admin/users" },
+  { icon: FileText, name: "Pedidos", href: "/admin/orders" },
+  { icon: Settings, name: "Configuración", href: "/admin/settings" },
+];
 
 export function Sidenav({ brandImg, brandName, routes }) {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -26,23 +40,28 @@ export function Sidenav({ brandImg, brandName, routes }) {
     transparent: "bg-transparent shadow-none",
   };
   const modulo = localStorage.getItem("modulo");
-
-  // Hook de navegación
   const navigate = useNavigate();
+  const [expanded, setExpanded] = useState(true);
+
+  const cerrarSesion = () => {
+    localStorage.clear();
+    navigate("/inicio/login");
+  };
 
   return (
     <aside
-      className={`border-r border-gray-900  bg-white ${sidenavTypes[sidenavType]} ${
-        openSidenav ? "translate-x-0 " : "-translate-x-80"
-      } fixed inset-0 z-50 h-100vh w-72 transition-transform duration-300 xl:translate-x-0`}
+      className={`border-r border-blue-900 bg-blue-900 text-white ${
+        sidenavTypes[sidenavType]
+      } ${
+        openSidenav ? "translate-x-0" : "-translate-x-80"
+      } fixed inset-0 z-50 h-screen ${
+        expanded ? "w-64" : "w-20"
+      } transition-transform duration-300 xl:translate-x-0`}
     >
       <div className="relative">
         <Link to="/admin/home" className="py-6 px-8 text-center">
-          <Typography
-            variant="h6"
-            color={sidenavType === "dark" ? "white" : "blue-gray"}
-          >
-            RETRO SHIRT
+          <Typography variant="h6" color="white">
+            {brandName}
           </Typography>
         </Link>
         <IconButton
@@ -76,37 +95,38 @@ export function Sidenav({ brandImg, brandName, routes }) {
                 {pages
                   .filter(({ icon }) => icon !== "")
                   .map(({ icon, name, path }) => (
-                    <ListItem
+                    <NavLink
                       key={name}
-                      type="button"
-                      onClick={() =>
-                        handleListItemClick(dispatch, layout, path, navigate)
+                      to={`/${layout}${path}`}
+                      className={({ isActive }) =>
+                        `flex items-center gap-2 px-4 py-2 rounded ${
+                          isActive
+                            ? "text-gray-100 font-bold bg-gray-800"
+                            : "text-gray-300 hover:bg-gray-700"
+                        }`
                       }
                     >
-                      <NavLink to={`/${layout}${path}`}>
-                        {({ isActive }) => (
-                          <div
-                            className={`flex items-center gap-2 px-4 capitalize ${
-                              isActive
-                                ? "text-green-900 border-l-4 border-green-600"
-                                : "text-gray-900"
-                            }`}
-                          >
-                            <ListItemPrefix>{icon}</ListItemPrefix>
-                            <Typography
-                              color="inherit"
-                              className="font-medium capitalize"
-                            >
-                              {name}
-                            </Typography>
-                          </div>
-                        )}
-                      </NavLink>
-                    </ListItem>
+                      <ListItemPrefix>{icon}</ListItemPrefix>
+                      <Typography
+                        color="inherit"
+                        className="font-medium capitalize"
+                      >
+                        {name}
+                      </Typography>
+                    </NavLink>
                   ))}
               </List>
             </ul>
           ))}
+      </div>
+      <div className="p-4 border-t border-gray-700">
+        <button
+          className="flex items-center w-full mt-2 py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded transition-colors duration-200"
+          onClick={cerrarSesion}
+        >
+          <LogOut size={20} />
+          {expanded && <span className="ml-4">Cerrar Sesión</span>}
+        </button>
       </div>
     </aside>
   );

@@ -133,7 +133,7 @@ const Login = () => {
           </div>
           <p className="text-center text-red-700 p-1 ">{errorMessage}</p>
 
-          <Button className="mt-6" fullWidth type="submit">
+          <Button className="mt-6  bg-white"  fullWidth type="submit">
             Iniciar Sesión
           </Button>
 

@@ -11,6 +11,7 @@ import {
   SiNewbalance,
   SiFila,
 } from "react-icons/si";
+import { ArrowRight } from "lucide-react";
 
 export const NeuHero = () => {
   return (
@@ -31,7 +32,7 @@ const Copy = () => {
         <strong
           className="flex origin-top-left items-center border rounded-full border border-zinc-900 bg-white p-0.5 text-sm transition-transform hover:-rotate-2"
         >
-          <span className="rounded-full bg-green-900 px-2 py-0.5 font-medium text-white">
+          <span className="rounded-full bg-blue-900 px-2 py-0.5 font-medium text-white">
           Estilo retro
           </span>
           <span className="ml-1.5 mr-1 inline-block">
@@ -40,14 +41,14 @@ const Copy = () => {
           <FiArrowUpRight className="mr-2 inline-block" />
         </strong>
       </div>
-      <h1 className="max-w-4xl text-center text-4xl font-black leading-[1.15] md:text-6xl md:leading-[1.15]">
+      <h1 className="max-w-4xl  text-white text-center text-4xl font-black leading-[1.15] md:text-6xl md:leading-[1.15]">
         RETRO SHIRT
       </h1>
-      <p className="mx-auto my-4 max-w-3xl text-center text-base leading-relaxed md:my-6 md:text-xl md:leading-relaxed">
+      <p className="mx-auto my-4 text-white  max-w-3xl text-center text-base leading-relaxed md:my-6 md:text-xl md:leading-relaxed">
         Personalizamos camisetas con diseños retro únicos. Calidad y estilo en cada prenda, hecha especialmente para ti.
       </p>
-      <button className="rounded-lg bg-green-700 p-3 uppercase text-white transition-colors hover:bg-green-900">
-        <span className="font-bold">Consigue la tuya ya</span>
+      <button className="rounded-lg flex bg-gray-100 p-3 uppercase text-gray-900 transition-colors hover:bg-gray-500">
+        <span className="font-bold">Consigue la tuya ya </span><ArrowRight className="ml-2" size={20} />
       </button>
     </>
   );
@@ -125,7 +126,7 @@ const TranslateWrapper = ({ children, reverse }) => {
 const LogoItem = ({ Icon, name }) => {
   return (
     <span className="flex items-center justify-center gap-4 px-4 py-2 md:py-4">
-      <Icon className="text-2xl text-green-600 md:text-3xl" />
+      <Icon className="text-2xl text-blue-900 md:text-3xl" />
       <span className="whitespace-nowrap text-xl font-semibold uppercase md:text-2xl">
         {name}
       </span>

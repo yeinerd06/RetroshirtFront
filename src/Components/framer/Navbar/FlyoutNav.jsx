@@ -13,11 +13,11 @@ import { Link } from "react-router-dom";
 const LINKS = [
   {
     text: "Inicio",
-    href: "/",
+    href: "/inicio",
   },
   {
     text: "Productos",
-    href: "#productos",
+    href: "/inicio/productos",
     // component: PricingContent,
   },
    {
@@ -73,8 +73,8 @@ const FlyoutNav = () => {
       transition-all duration-300 ease-out lg:px-12
       ${
         scrolled
-          ? "bg-green-900 py-3 shadow-xl text-white"
-          : "bg-green-900 py-4 shadow-xl text-white"
+          ? "bg-blue-900 py-3 shadow-xl text-white"
+          : "bg-blue-900 py-4 shadow-xl text-white"
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between">
@@ -124,7 +124,7 @@ const Links = () => {
     <div className="flex items-center gap-6">
       {LINKS.map((l) => (
      
-         <Link to={l.href}  key={l.text} FlyoutContent={l.component} >
+         <Link to={l.href}  className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700" key={l.text} FlyoutContent={l.component} >
             {l.text}
          </Link>
     

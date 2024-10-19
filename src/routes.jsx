@@ -31,6 +31,7 @@ import CompraUpdate from "./pages/Admin/Proveedor/Components/CompraUpdate";
 import HomeRetroShirt from "./pages/Home/Home";
 import { LoginFramer } from "./pages/auth/LoginFramer";
 import { ResetPassword } from "./pages/auth/ResetPassword";
+import ProductGrid from "./pages/Home/Productos";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -255,6 +256,12 @@ export const routes = [
         name: "Inicio",
         path: "/",
         element: <HomeRetroShirt />,
+      },
+      {
+        icon:<ServerStackIcon {...icon} />,
+        name: "productos",
+        path: "/productos",
+        element: <ProductGrid />,
       },
       {
         icon: <ServerStackIcon {...icon} />,

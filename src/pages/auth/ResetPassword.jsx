@@ -106,16 +106,16 @@ const Form = () => {
       <div className="mx-auto my-auto w-full max-w-xl px-4 md:pr-0">
         <motion.h1
           variants={primaryVariants}
-          className="mb-2 text-center text-4xl font-semibold"
+          className="mb-2 text-center text-gray-100 text-4xl font-semibold"
         >
           RETRO SHIRT
         </motion.h1>
-        <motion.p variants={primaryVariants} className="mb-8 text-center">
+        <motion.p variants={primaryVariants} className="mb-8 text-center text-gray-100">
         Recuperar contraseña
         </motion.p>
 
         {!codigoEnviado ? (
-        <form onSubmit={handleSendCodigo} className="w-full">
+        <form onSubmit={handleSendCodigo} className="w-full text-gray-100">
         <div className="text-center">
               <Typography variant="h5" className="font-bold mb-4">Se enviara un codigo de 6 digitos a su email</Typography>
              </div>
@@ -149,7 +149,7 @@ const Form = () => {
               scale: 0.985,
             }}
             type="submit"
-            className="mb-3 w-full  rounded bg-green-700 px-4 py-2 text-center font-medium text-white transition-colors hover:bg-green-900"
+            className="mb-3 w-full  rounded bg-gray-100 px-4 py-2 text-center font-bold text-gray-900 transition-colors hover:bg-gray-500"
           >
             Enviar codigo
           </motion.button>
@@ -161,7 +161,7 @@ const Form = () => {
           </motion.p>
         </form>
         ):(
-          <form className="mt-8 mb-2 mx-auto w-full" onSubmit={handleValidarCodigo}>
+          <form className="mt-8 mb-2 mx-auto w-full text-gray-100" onSubmit={handleValidarCodigo}>
           <div className="text-center">
             <Typography variant="h5" className="font-bold mb-4">
               Se envio un codigo de 6 digitos al email:</Typography>
@@ -209,7 +209,7 @@ const Form = () => {
 
            <p className="text-center text-red-700 p-1">{mensaje}</p>
             {intentos<5 &&(
-               <Button className="mt-6 bg-green-700 hover:bg-green-900" type="submit"  fullWidth>
+               <Button className="mt-6 bg-gray-100 hover:bg-green-500 text-gray-900 " type="submit"  fullWidth>
                Actualizar contraseña
              </Button>
             )}

@@ -10,7 +10,7 @@ export function Inicio() {
   useScrollToTop()
 
   return (
-    <div className="relative min-h-screen w-full ">
+    <div className="relative min-h-screen w-full bg-blue-900 ">
       <InicioProvider>
         <NavBarFlyOut/> 
     

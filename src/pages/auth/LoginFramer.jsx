@@ -103,15 +103,15 @@ const Form = () => {
       <div className="mx-auto my-auto w-full max-w-xl px-4 md:pr-0">
         <motion.h1
           variants={primaryVariants}
-          className="mb-2 text-center text-4xl font-semibold"
+          className="mb-2 text-center text-gray-100 text-4xl font-semibold"
         >
           RETRO SHIRT
         </motion.h1>
-        <motion.p variants={primaryVariants} className="mb-8 text-center">
+        <motion.p variants={primaryVariants} className="mb-8 text-gray-100 text-center">
           Ingresa tus datos para iniciar sesión
         </motion.p>
 
-        <form onSubmit={handleLogin} className="w-full">
+        <form onSubmit={handleLogin} className="w-full text-gray-100">
           <motion.div variants={primaryVariants} className="mb-6 w-full ">
             <label
               htmlFor="email-input"
@@ -124,7 +124,7 @@ const Form = () => {
               type="text"
                name="email"
               placeholder="Enter your email"
-              className="w-full rounded border-[1px] border-slate-300 px-2.5 py-1.5 focus:outline-indigo-600"
+              className="w-full text-gray-900 rounded border-[1px] border-slate-300 px-2.5 py-1.5 focus:outline-indigo-600"
               required
               onChange={handleChange}
               
@@ -143,7 +143,7 @@ const Form = () => {
               type="password"
                name="password"
               placeholder="Enter your password"
-              className="w-full rounded border-[1px] border-slate-300 px-2.5 py-1.5 focus:outline-indigo-600"
+              className="w-full rounded  text-gray-900   border-[1px] border-slate-300 px-2.5 py-1.5 focus:outline-indigo-600"
               required
               onChange={handleChange}
             />
@@ -157,7 +157,7 @@ const Form = () => {
               scale: 0.985,
             }}
             type="submit"
-            className="mb-3 w-full  rounded bg-green-600 px-4 py-2 text-center font-medium text-white transition-colors hover:bg-green-700"
+            className="mb-3 w-full  rounded bg-white px-4 py-2 text-center font-bold text-gray-900 transition-colors hover:bg-gray-500"
           >
             Iniciar Sesion
           </motion.button>
