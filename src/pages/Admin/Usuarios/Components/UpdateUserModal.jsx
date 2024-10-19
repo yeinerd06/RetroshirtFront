@@ -170,7 +170,7 @@ const UpdateUserModal = ({ openUpdate, handleOpenUpdate, user }) => {
       {loading && (
         <Loader />
       )}
-      <DialogHeader>Actualizar Usuario</DialogHeader>
+      <DialogHeader className="bg-blue-900 text-white">EDITAR USUARIO</DialogHeader>
       <form onSubmit={handleRegister}>
         <DialogBody divider style={{ maxHeight: '70vh', overflowY: 'auto' }}>
           
@@ -249,14 +249,14 @@ const UpdateUserModal = ({ openUpdate, handleOpenUpdate, user }) => {
         <div className="mb-4">
           <p className="text-center mt-3 text-red-700">{mensaje}</p>
         </div>
-        <DialogFooter>
+        <DialogFooter className="border-0">
 
 
-          <Button variant="text" color="red" onClick={handleOpenUpdate} className="mr-1">
-            <span>Cancelar</span>
+          <Button  onClick={handleOpenUpdate} className="mr-1 bg-red-900 text-white">
+            <span>CANCELAR</span>
           </Button>
-          <Button variant="gradient" type="submit" color="green">
-            <span>Actualizar</span>
+          <Button  type="submit" className="bg-blue-900 text-white">
+            <span>GUARDAR CAMBIOS</span>
           </Button>
         </DialogFooter>
       </form>

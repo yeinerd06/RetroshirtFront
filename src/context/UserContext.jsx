@@ -4,6 +4,7 @@ import { apiListadoInformeCaja } from "@/Api/Informe/InformeFactura";
 import { apiListadoProveedores } from "@/Api/Proveedor/Proveedor";
 import { apiListadoRoles } from "@/Api/Usuarios/Roles";
 import { apiListadoUsuarios } from "@/Api/Usuarios/Usuarios";
+import { Loader } from "@/Components/Loader";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 
@@ -25,11 +26,12 @@ export const UserProvider = ({ children }) => {
   const [facturaImprimir, setFacturaImprimir] = useState([])
   const [proveedores, setProveedores] = useState([])
   const [informesCaja, setInformesCaja] = useState([])
+  const [loading, setLoading] = useState(false)
   const listadoArticulos = async () => {
     try {
       const response = await apiListadoArticulos();
       const data = await response.json();
-      //console.log(data)
+      console.log(data)
       setArticulos(data.data);
     } catch (error) {
       console.log(error);
@@ -158,12 +160,13 @@ export const UserProvider = ({ children }) => {
         facturas, setFacturas,
         proveedores, setProveedores,
         informesCaja, setInformesCaja,
-        listadoFacturas
-
+        listadoFacturas,
+        loading, setLoading
 
       }}
     >
       {children}
+      <Loader  loading={loading}/>
     </UserContext.Provider>
   );
 };

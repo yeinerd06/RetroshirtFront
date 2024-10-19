@@ -62,14 +62,14 @@ const VerificarToken = () => {
                     location.pathname === "/auth/recuperar-contraseña"
                 ) {
                     if (await validoToken()) {
-                        navigate("/" + buscarRol() + "/home");
+                        navigate("/" + buscarRol() + "/inicio");
                     } else {
                         enviarLogin();
                     }
                 } else {
                     const rol = buscarRol();
                     if (rol && !location.pathname.includes(rol)) {
-                        navigate("/" + rol + "/home");
+                        navigate("/" + rol + "/inicio");
                     }
                 }
             }

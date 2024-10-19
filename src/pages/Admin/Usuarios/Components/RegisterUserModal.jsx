@@ -136,7 +136,7 @@ const RegisterUserModal = ({ open, handleOpen }) => {
       {loading && (
         <Loader />
       )}
-      <DialogHeader>Registrar Usuario</DialogHeader>
+      <DialogHeader className="bg-blue-900 text-white">NUEVO USUARIO</DialogHeader>
       <form onSubmit={handleRegister}>
         <DialogBody divider style={{ maxHeight: '70vh', overflowY: 'auto' }}>
           <div className="mb-4">
@@ -212,10 +212,10 @@ const RegisterUserModal = ({ open, handleOpen }) => {
         <DialogFooter>
 
 
-          <Button variant="text" color="red" onClick={handleOpen} className="mr-1">
+          <Button   onClick={handleOpen} className="mr-1 bg-red-900 text-white">
             <span>Cancelar</span>
           </Button>
-          <Button variant="gradient" type="submit" color="green">
+          <Button  type="submit"  className="bg-blue-900 text-white">
             <span>Registrar</span>
           </Button>
         </DialogFooter>

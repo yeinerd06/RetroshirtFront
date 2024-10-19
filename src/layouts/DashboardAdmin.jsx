@@ -10,6 +10,7 @@ import {
 import routes from "@/routes";
 import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
 import { useUserContext } from "@/context/UserContext";
+import LayoutRoutes from "@/Components/LayoutRoutes/LayoutRoutes";
 
 const  DashboardAdmin=()=> {
   const {modulo}=useUserContext()
@@ -26,7 +27,7 @@ const  DashboardAdmin=()=> {
       />
       <div className="p-4 xl:ml-64">
         <DashboardNavbar />
-       
+       <LayoutRoutes>
         <Routes>
           {routes.map(
             ({ layout, pages }) =>
@@ -36,6 +37,7 @@ const  DashboardAdmin=()=> {
               ))
           )}
         </Routes>
+        </LayoutRoutes>
         <div className="text-blue-gray-600">
           <Footer />
         </div>

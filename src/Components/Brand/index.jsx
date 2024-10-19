@@ -1,7 +1,7 @@
 
 const Brand = ({ ...props }) => (
     <img
-        src="/img/retro-shirt.jpg"
+        src="/img/retro-shirt.png"
         alt="Retro Shirt logo"
         {...props}
         width={50}

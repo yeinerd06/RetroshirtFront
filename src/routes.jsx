@@ -32,6 +32,7 @@ import HomeRetroShirt from "./pages/Home/Home";
 import { LoginFramer } from "./pages/auth/LoginFramer";
 import { ResetPassword } from "./pages/auth/ResetPassword";
 import ProductGrid from "./pages/Home/Productos";
+import Inicio from "./pages/Admin/Inicio/Inicio";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -43,9 +44,9 @@ export const routes = [
     pages: [
       {
         icon: <HomeIcon {...icon} />,
-        name: "dashboard",
-        path: "/home",
-        element: <Home />,
+        name: "Inicio",
+        path: "/inicio",
+        element: <Inicio />,
 
       },
       {
@@ -90,13 +91,13 @@ export const routes = [
         element: <AdminProveedor />,
 
       },
-      {
-        icon: <BanknotesIcon {...icon} />,
-        name: "informe caja",
-        path: "/informe-caja",
-        element: <InformeCaja />,
+      // {
+      //   icon: <BanknotesIcon {...icon} />,
+      //   name: "informe caja",
+      //   path: "/informe-caja",
+      //   element: <InformeCaja />,
 
-      },
+      // },
       {
         icon: "",
         name: "proveedor",
@@ -132,8 +133,8 @@ export const routes = [
     pages: [
       {
         icon: <HomeIcon {...icon} />,
-        name: "dashboard",
-        path: "/home",
+        name: "inicio",
+        path: "/inicio",
         element: <Home />,
 
       }, {
@@ -170,8 +171,8 @@ export const routes = [
     pages: [
       {
         icon: <HomeIcon {...icon} />,
-        name: "dashboard",
-        path: "/home",
+        name: "inicio",
+        path: "/inicio",
         element: <Home />,
 
       }, {
@@ -223,8 +224,8 @@ export const routes = [
     pages: [
       {
         icon: <HomeIcon {...icon} />,
-        name: "dashboard",
-        path: "/home",
+        name: "inicio",
+        path: "/inicio",
         element: <Home />,
       },
       {

@@ -21,6 +21,7 @@ import {
 } from "@material-tailwind/react";
 import { useMaterialTailwindController, setOpenSidenav } from "@/context";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import Brand from "@/Components/Brand";
 
 // Items de menú con sus iconos y rutas
 const menuItems = [
@@ -59,9 +60,9 @@ export function Sidenav({ brandImg, brandName, routes }) {
       } transition-transform duration-300 xl:translate-x-0`}
     >
       <div className="relative">
-        <Link to="/admin/home" className="py-6 px-8 text-center">
-          <Typography variant="h6" color="white">
-            {brandName}
+        <Link to="/admin/inicio" className="py-6 px-8 text-center">
+          <Typography variant="h6" color="white" className="flex gap-2 items-center justify-center">
+            <Brand/> {brandName}
           </Typography>
         </Link>
         <IconButton
@@ -75,7 +76,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
           <XMarkIcon strokeWidth={2.5} className="h-5 w-5 text-white" />
         </IconButton>
       </div>
-      <div className="m-4">
+      <div className="m-1">
         {routes
           .filter(({ layout }) => layout === modulo)
           .map(({ layout, title, pages }, key) => (
@@ -124,7 +125,7 @@ export function Sidenav({ brandImg, brandName, routes }) {
           className="flex items-center w-full mt-2 py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded transition-colors duration-200"
           onClick={cerrarSesion}
         >
-          <LogOut size={20} />
+          <LogOut size={20} className="text-red-900" />
           {expanded && <span className="ml-4">Cerrar Sesión</span>}
         </button>
       </div>

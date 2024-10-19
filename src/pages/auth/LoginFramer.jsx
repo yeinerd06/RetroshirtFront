@@ -46,7 +46,7 @@ const Form = () => {
           const rol = usuario?.roles[0]?.nombre?.split("_")[1].toLowerCase();
           localStorage.setItem("data",JSON.stringify(usuario))
           localStorage.setItem("modulo",rol)
-          navigate("/" + rol + "/home")
+          navigate("/" + rol + "/inicio")
         
         } else {
           let msg = data?.mensaje

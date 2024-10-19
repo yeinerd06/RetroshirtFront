@@ -46,7 +46,7 @@ export default function CategoriasInicio() {
       </div>
 
       {/* Newsletter Signup */}
-      <div className="bg-blue-900 text-white">
+      {/* <div className="bg-blue-900 text-white">
         <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-extrabold mb-4">Únete a Nuestra Newsletter</h2>
           <p className="mb-8">Recibe las últimas noticias y ofertas exclusivas directamente en tu bandeja de entrada.</p>
@@ -62,7 +62,7 @@ export default function CategoriasInicio() {
             </button>
           </form>
         </div>
-      </div>
+      </div> */}
 
     
     </div>

@@ -18,14 +18,15 @@ import RegisterArticuloModal from "./Components/RegisterArticuloModal";
 import UpdateArticuloModal from "./Components/UpdateArticuloModal";
 import AlertaInventario from "./Components/Alerta";
 import { Link, useNavigate } from "react-router-dom";
+import { useProductoContext } from "@/context/ProductoContext";
 
 const AdminInventario = () => {
-  const { articulos, usuario ,modulo} = useUserContext();
-  const [loading, setLoading] = useState(false);
+  const { articulos, usuario ,modulo,setLoading} = useUserContext();
+  const {categorias}=useProductoContext()
   const [open, setOpen] = useState(false);
   const [articuloSelect, setArticuloSelect] = useState([]);
   const [openUpdate, setOpenUpdate] = useState(false);
-  const [filter, setFilter] = useState("disponible");
+  const [filter, setFilter] = useState("todos");
   const [filterValue, setFilterValue] = useState("");
 
   const handleOpen = () => {
@@ -51,32 +52,26 @@ const AdminInventario = () => {
     switch (filter) {
       case "nombre":
         return articulos.filter((articulo) =>
-          articulo.nombre.toLowerCase().includes(filterValue.toLowerCase())
+          articulo?.nombre.toLowerCase().includes(filterValue.toLowerCase())
         );
-      case "marca":
-        return articulos.filter((articulo) =>
-          articulo.marca.toLowerCase().includes(filterValue.toLowerCase())
-        );
+    
       case "categoria":
         return articulos.filter((articulo) =>
-          articulo.categoria.toLowerCase().includes(filterValue.toLowerCase())
+          articulo?.categoria?.nombre?.toLowerCase().includes(filterValue.toLowerCase())
         );
-        case "stock":
-          return articulos.filter((articulo) =>
-            articulo.stock == (filterValue)
-        );
+     
       case "disponible":
-        return articulos.filter((articulo) => articulo.estado);
+        return articulos.filter((articulo) => articulo?.estado);
       case "no-disponible":
-        return articulos.filter((articulo) => !articulo.estado);
-      case "stockBajo":
-        return articulos.filter((articulo) => articulo.stock < articulo.cantidadMinima);
+        return articulos.filter((articulo) => !articulo?.estado);
+ 
       default:
         return articulos;
     }
   };
 
-  const filteredArticulos = filterArticulos(articulos);
+  const filteredArticulos =filterArticulos(articulos);
+   
 
   const navigate = useNavigate();
 
@@ -84,10 +79,9 @@ const AdminInventario = () => {
     navigate(`/${modulo}/inventario/articulo/${articulo.id}`);
   };
   return (
-    <div className="mb-4 mt-6">
-      {loading && <Loader />}
-      <Card className="overflow-hidden xl:col-span-2 border border-blue-gray-100 shadow-sm mb-6">
-        <CardHeader
+    <div>
+      
+      <div
           floated={false}
           shadow={false}
           color="transparent"
@@ -102,11 +96,8 @@ const AdminInventario = () => {
               <option value="all">Todos</option>
               <option value="categoria">Categoria</option>
               <option value="nombre">Nombre</option>
-              <option value="marca">Marca</option>
-              <option value="stock">Stock</option>
               <option value="disponible">Disponible</option>
               <option value="no-disponible">No Disponible</option>
-              <option value="stockBajo">Stock Bajo</option>
             </select>
             {(filter === "nombre" || filter === "marca") && (
               <input
@@ -135,10 +126,15 @@ const AdminInventario = () => {
                 onChange={handleFilterValueChange}
                 required
               >
-                <option value="LUBRICANTES">LUBRICANTES</option>
+                {categorias?.map((categoria) => (
+                  <option key={categoria.id} value={categoria.valor}>
+                    {categoria.nombre}
+                  </option>
+                ))}
+                {/* <option value="LUBRICANTES">LUBRICANTES</option>
                 <option value="FILTROS">FILTROS</option>
                 <option value="REFRIGERANTES">REFRIGERANTES</option>
-                <option value="LIQUIDOS DE FRENO">LIQUIDOS DE FRENO</option>
+                <option value="LIQUIDOS DE FRENO">LIQUIDOS DE FRENO</option> */}
               </select>
             )}
           </div>
@@ -152,19 +148,22 @@ const AdminInventario = () => {
             <SquaresPlusIcon className="h-5 w-5 mr-2" />
             Registrar Producto
           </Button>
-        </CardHeader>
-        <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-          <table className="w-full min-w-[640px] table-auto">
-            <thead>
+        </div>
+
+
+          <div className="relative px-0 pt-0 pb-2">
+        <div className="overflow-x-auto scrollbar-hide">
+          <table className="w-full min-w-[640px] table-auto border-collapse">
+            <thead className="bg-blue-900 text-white">
               <tr>
-                {["Nombre", "Categoria", "Marca", "Min", "Stock", "Precio de venta", "Disponible", "Acciones"].map((el) => (
+                {["Nombre", "Categoria", "Min", "Stock", "Precio de venta", "Disponible", "Acciones"].map((el) => (
                   <th
                     key={el}
                     className="border-b border-blue-gray-50 py-3 px-6 text-left"
                   >
                     <Typography
                       variant="small"
-                      className="text-[11px] font-medium font-bold uppercase text-blue-gray-900"
+                      className="text-[11px] font-medium font-bold uppercase "
                     >
                       {el}
                     </Typography>
@@ -173,11 +172,10 @@ const AdminInventario = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredArticulos?.map((articulo) => (
+            {filteredArticulos?.slice().reverse().map((articulo) => (
                 <tr key={articulo?.id}
-                  className={
-                    articulo.estado ? articulo.stock < articulo.cantidadMinima ? "border border-red-500 bg-red-200 text-gray-900" : "" : "border border-gray-500 bg-gray-200 text-gray-900"
-                  }>
+                 
+                  >
                   <td className="py-3 px-5">
                     <div className="flex items-center gap-4">
                       {articulo?.imagen && (
@@ -192,28 +190,31 @@ const AdminInventario = () => {
                         variant="small"
                         className="text-xs font-medium text-blue-gray-900"
                       >
-                         <p>código: {articulo.codigo} </p>
+                         
                        <p> {articulo?.nombre}</p>
                       </Typography>
                     </div>
                   </td>
                   <td className="py-3 px-5">
-                    {articulo?.categoria}
+                    {articulo?.categoria?.nombre}
+                  <p className="text-sm">  {articulo?.genero}</p>
                   </td>
                   <td className="py-3 px-5">
-                    {articulo.marca}
+                    {articulo?.cantidadMinima}
                   </td>
                   <td className="py-3 px-5">
-                    {articulo.cantidadMinima}
+                    {articulo?.colorTalla?.map((ct) =>(
+                      <div className="flex justify-between text-sm">
+                        <p >{ct.color.nombre}</p> : <p>{ct.talla.nombre}</p>:<p>{ct.cantidad}</p>
+
+                        </div>
+                    ) )}
                   </td>
                   <td className="py-3 px-5">
-                    {articulo.stock}
+                    {articulo?.precio}
                   </td>
                   <td className="py-3 px-5">
-                    {articulo.precio}
-                  </td>
-                  <td className="py-3 px-5">
-                    {articulo.estado ? "Si" : "No"}
+                    {articulo?.estado ? "Si" : "No"}
                   </td>
                   <td className="py-3 px-5">
                     <div className="w-10/12 flex items-center justify-start">
@@ -235,15 +236,18 @@ const AdminInventario = () => {
                         </div>
                       </Typography>
                     </div>
-                  </td>
+                  </td> 
+                  {/* 
+                 
+                  */}
 
 
                 </tr>
               ))}
             </tbody>
           </table>
-        </CardBody>
-      </Card>
+        </div>
+        </div>
       <RegisterArticuloModal open={open} handleOpen={handleOpen} />
       <UpdateArticuloModal open={openUpdate} handleOpen={handleOpenUpdate} articulo={articuloSelect} />
     </div>
