@@ -19,6 +19,8 @@ const RegisterUserModal = ({ open, handleOpen }) => {
 
   const { roles, setUsuarios } = useUserContext();
 
+  const rolesFiltered = roles?.filter(rol => rol.id !== 1 && rol.id !== 2);
+
   const [loading, setloading] = useState(false)
   const [mensaje, setMensaje] = useState("");
   const [imagen, setImagen] = useState(null);
@@ -145,7 +147,7 @@ const RegisterUserModal = ({ open, handleOpen }) => {
               onChange={handleSelectChange}
               required
             >
-              {roles?.filter(rol => rol.id !== 1)
+              {rolesFiltered?.filter(rol => rol.id !== 1 || rol.id!==2)
               ?.map((rol) => (
                 <Option key={rol.id} value={rol.id}>
                   {rol.nombre.split("_")[1]}

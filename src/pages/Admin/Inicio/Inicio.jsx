@@ -20,6 +20,7 @@ import { apiSaveCategoria } from '@/Api/Articulo/Categoria';
 import alertify from "alertifyjs";
 import "alertifyjs/build/css/alertify.css";
 import EmpresaInfo from './Empresa/EmpresaInfo';
+import ColorSmall from '@/Global/ColorSmall';
 // Modal Component for Form Input
 const RegistroModal = ({ isOpen, onClose, title, onSubmit, children }) => (
   <Dialog open={isOpen} handler={onClose}>
@@ -112,7 +113,7 @@ const Inicio = () => {
       const response = await api(data);
       const result = await response.json();
       if (result.success) {
-        update([...items, data]);
+        update([...items, result.data]);
         alertify.success(`${type.charAt(0).toUpperCase() + type.slice(1)} registrada correctamente!`);
 
         setFormData({ ...formData, ...resetFields });
@@ -146,7 +147,7 @@ const Inicio = () => {
           renderItem={(col) => (
             <li key={col.id} className="border-b pb-2 grid grid-cols-3 items-center">
               <span className="col-span-1">{col.nombre}</span>
-              <span className="col-span-1 w-4 h-4 rounded-full" style={{ backgroundColor: col.color }}></span>
+             <ColorSmall color={col.color}/>
               <span className="col-span-1 text-gray-500">{col.color}</span>
             </li>
           )}

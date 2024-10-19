@@ -2,9 +2,9 @@ import { Typography } from "@material-tailwind/react";
 
 const DatosProveedor = ({proveedor}) => {
     return (
-        <div className="">
+        <div className="  p-3 mb-3 rounded-md">
           
-
+            <strong>Informacíon del proveedor :</strong>
             <div className="mb-6 grid grid-cols-1 sm:grid-cols-4 gap-6">
                 <div>
                     <Typography className="font-medium text-gray-700">Nombre:</Typography>

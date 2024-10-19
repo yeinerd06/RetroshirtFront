@@ -8,6 +8,7 @@ import {
   Typography,
   Select,
   Option,
+  IconButton,
 } from "@material-tailwind/react";
 import RegisterUserModal from "./Components/RegisterUserModal";
 import { useUserContext } from "@/context/UserContext";
@@ -17,6 +18,7 @@ import alertify from "alertifyjs";
 import "alertifyjs/build/css/alertify.css";
 import { apiDeleteUsuario } from "@/Api/Usuarios/Usuarios";
 import { Loader } from "@/Components/Loader";
+import { FaEdit } from "react-icons/fa";
 
 const AdminUsuarios = () => {
   const { usuarios, setUsuarios, roles , setLoading} = useUserContext();
@@ -170,15 +172,18 @@ const AdminUsuarios = () => {
                     </Typography>
                   </td>
                   <td className="py-3 px-5">
-                    <div className="flex space-x-2">
+                    <IconButton className="bg-yellow-900 hover:bg-yellow-700" onClick={() => handleOpenUpdate(usuario)}>
+                    <FaEdit className="text-xl" />
+                    </IconButton>
+                    {/* <div className="flex space-x-2">
+
                       <PencilSquareIcon title="EDITAR USUARIO"
                         className="w-5 h-5 text-yellow-700 cursor-pointer hover:text-yellow-900 " onClick={() => handleOpenUpdate(usuario)} />
 
-                      {/* Uncomment if needed */}
-                      {/* <Button size="sm" color="white" onClick={() => handleOpenDelete(usuario)}>
+                      <Button size="sm" color="white" onClick={() => handleOpenDelete(usuario)}>
                   <TrashIcon className="w-5 h-5 text-red-900" />
-                </Button> */}
-                    </div>
+                </Button>
+                    </div> */}
                   </td>
                 </tr>
               ))}

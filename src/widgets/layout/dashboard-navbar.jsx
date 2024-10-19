@@ -55,7 +55,8 @@ export function DashboardNavbar() {
             {usuario?.imagen && (
               <Avatar src={usuario?.imagen} alt={"Imagen de perfil"} size="sm" />
             )}
-          </div><AlertaInventario />
+          </div>
+          {/* <AlertaInventario /> */}
           <IconButton
             variant="text"
             color="blue-gray"

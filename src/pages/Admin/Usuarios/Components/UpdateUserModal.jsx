@@ -18,7 +18,7 @@ const UpdateUserModal = ({ openUpdate, handleOpenUpdate, user }) => {
 
 
   const { roles, setUsuarios,facturas } = useUserContext();
-
+  const rolesFiltered = roles?.filter(rol => rol.id !== 1 && rol.id !== 2);
   const [loading, setloading] = useState(false)
   const [mensaje, setMensaje] = useState("");
   const [imagen, setImagen] = useState(null);
@@ -181,7 +181,7 @@ const UpdateUserModal = ({ openUpdate, handleOpenUpdate, user }) => {
               required
               disabled={formData?.roles?.id == 1 ? true: false}
             >
-              {roles?.filter(rol => rol.id !== 1)
+              {rolesFiltered?.filter(rol => rol.id !== 1)
               .map((rol) => (
                 <Option key={rol.id} value={rol.id}>
                   {rol.nombre.split("_")[1]}

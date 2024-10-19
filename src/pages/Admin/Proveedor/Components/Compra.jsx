@@ -21,6 +21,8 @@ import DatosProveedor from "./DatosProveedor";
 import { useProductoContext } from "@/context/ProductoContext";
 import { apiSavePedidoProveedor } from "@/Api/Pedido/PedidoProveedor";
 import { useProveedorContext } from "@/context/ProveedorContext";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import RegisterArticuloModal from "../../Inventario/Components/RegisterArticuloModal";
 
 // Subcomponente para el manejo de la tabla de tallas por color
 const TallasTable = ({
@@ -82,7 +84,7 @@ const TallasTable = ({
 const Compra = () => {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
-  const {listadoProveedoresPedidos}=useProveedorContext()
+  const { listadoProveedoresPedidos } = useProveedorContext();
   const { colores, tallas } = useProductoContext();
   const {
     articulos,
@@ -103,7 +105,10 @@ const Compra = () => {
   const [fechaEntrega, setFechaEntrega] = useState(""); // Estado de la fecha de entrega
   const [nota, setNota] = useState(""); // Estado de la nota
   const navigate = useNavigate();
-
+  const [open, setOpen] = useState(false);
+    const handleOpen = () => {
+        setOpen(!open);
+    };
   useEffect(() => {
     if (proveedores) {
       const proveedorEncontrado = proveedores.find((p) => p.id === Number(id));
@@ -123,8 +128,6 @@ const Compra = () => {
       })),
     [proveedor]
   );
-
-
 
   const tallasOptions = useMemo(
     () =>
@@ -177,7 +180,14 @@ const Compra = () => {
 
   const handleAgregarProducto = () => {
     if (selectedProducto) {
-       // console.log(selectedProducto)
+      const existeProducto = listaProductos.find(
+        (producto) => producto.proveedorArticulo.id === selectedProducto.value
+      );
+      if (existeProducto) {
+        alertify.error("Ya existe un producto con ese código");
+        return;
+      }
+      // console.log(selectedProducto)
       setListaProductos((prevLista) => [
         ...prevLista,
         {
@@ -196,34 +206,38 @@ const Compra = () => {
 
   const handleSaveFactura = (e) => {
     e.preventDefault();
-    if(listaProductos.length===0){
-      alertify.error("Debe selecionar un producto del proveedor")
-      return
+    if (listaProductos.length === 0) {
+      alertify.error("Debe selecionar un producto del proveedor");
+      return;
     }
 
-     // Validar que cada producto tenga al menos una talla con cantidad mayor a 1
-      const hasValidProducts = listaProductos.every(producto => 
-        producto.colores.some(colorObj =>
-            Object.values(colorObj.tallas).some(cantidad => parseInt(cantidad) > 0)
+    // Validar que cada producto tenga al menos una talla con cantidad mayor a 1
+    const hasValidProducts = listaProductos.every((producto) =>
+      producto.colores.some((colorObj) =>
+        Object.values(colorObj.tallas).some(
+          (cantidad) => parseInt(cantidad) > 0
         )
+      )
     );
 
     if (!hasValidProducts) {
-        alertify.error("Cada producto debe tener al menos una talla con cantidad mayor a 1.");
-        return; // No permite continuar si la validación falla
+      alertify.error(
+        "Cada producto debe tener al menos una talla con cantidad mayor a 1."
+      );
+      return; // No permite continuar si la validación falla
     }
 
-     // Crear la estructura correcta para ProveedorPedidoArticulo
-     const productosPedido = listaProductos.flatMap((producto) => 
+    // Crear la estructura correcta para ProveedorPedidoArticulo
+    const productosPedido = listaProductos.flatMap((producto) =>
       producto.colores.flatMap((colorObj) =>
-          Object.entries(colorObj.tallas).map(([tallaId, cantidad]) => ({
-              proveedorArticulo: { id: producto.id }, // referencia al artículo
-              color: { id: colorObj.color.value }, // referencia al color
-              talla: { id: parseInt(tallaId) }, // referencia a la talla
-              cantidad: parseInt(cantidad) // la cantidad de la talla para ese color
-          }))
+        Object.entries(colorObj.tallas).map(([tallaId, cantidad]) => ({
+          proveedorArticulo: { id: producto.id }, // referencia al artículo
+          color: { id: colorObj.color.value }, // referencia al color
+          talla: { id: parseInt(tallaId) }, // referencia a la talla
+          cantidad: parseInt(cantidad), // la cantidad de la talla para ese color
+        }))
       )
-  );
+    );
 
     console.log(productosPedido);
 
@@ -234,54 +248,50 @@ const Compra = () => {
       proveedor,
       codigoFactura,
       pedidoPendiente,
-      total:valorFactura,
+      total: valorFactura,
       fechaPedido: pedidoPendiente ? fechaPedido : null, // Solo si el pedido está pendiente
       fechaEntrega: pedidoPendiente ? fechaEntrega : null, // Solo si el pedido está pendiente
       nota,
     };
 
-
     console.log(pedido);
 
     setLoading(true);
     apiSavePedidoProveedor(pedido)
-      .then(res=>res.json())
-      .then(data=>{
-        console.log(data)
-        if(data.success){
-          listadoProveedoresPedidos()
-          alertify.success("Pedido enviado con éxito")
-          navigate(-1)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.success) {
+          listadoProveedoresPedidos();
+          alertify.success("Pedido enviado con éxito");
+          navigate(-1);
+        }else{
+          alertify.error(data.message);
         }
-      
-        
       })
-      .catch(err=>{
-        console.log(err)  
-        setLoading(false)
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
       })
-      .finally(()=>{
-        setLoading(false)
-      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
     <>
       <Loader loading={loading} />
-      <div className="flex justify-between">
+      <div className="flex justify-between p-3">
         <Typography variant="h2" className="text-lg sm:text-2xl uppercase">
-          Factura de compra
+          PEDIDO PROVEEDOR
         </Typography>
         <Link to={"/" + modulo + "/proveedores"}>
-          <i
-            className="fa fa-times-circle text-xl mr-3 text-red-900"
-            aria-hidden="true"
-          ></i>
+        <IoMdArrowRoundBack className="text-2xl mr-3 text-red-900" />
         </Link>
       </div>
       <DatosProveedor proveedor={proveedor} />
       <form onSubmit={handleSaveFactura}>
-        <div className="flex flex-col sm:flex-row items-center mb-4 space-y-4 sm:space-y-0 sm:space-x-4">
+        <div className="flex flex-col sm:flex-row items-center mb-4 space-y-4 p-3 sm:space-y-0 sm:space-x-4">
           <div className="flex items-center w-full sm:w-1/2">
             <label className="mr-2 w-1/4 sm:w-auto">Producto</label>
             <SelectReact
@@ -290,6 +300,7 @@ const Compra = () => {
               onChange={handleProductoChange}
               placeholder="Buscar por código"
               className="w-full"
+              noOptionsMessage={() => <Button type="button" onClick={handleOpen} color="green" size="sm" className="text-white">Registrar Articulo</Button>}
             />
           </div>
           <IconButton
@@ -353,15 +364,16 @@ const Compra = () => {
             </div>
           ))}
         </div>
-
-        <div className="grid sm:grid-cols-2 gap-6 mt-9">
+          <br />
+        <strong>Informacíon del Pedido :</strong>
+        <div className="grid sm:grid-cols-2 gap-6 mt-1">
           <div>
             <Input
               label="N° Factura"
               type="text"
               value={codigoFactura}
               onChange={(e) => setCodigoFactura(e.target.value)}
-              required
+              
             />
           </div>
           <div>
@@ -374,7 +386,7 @@ const Compra = () => {
             />
           </div>
         </div>
-
+      
         {/* Pedido Pendiente */}
         {/* <div className="flex ">
           <Checkbox
@@ -418,10 +430,11 @@ const Compra = () => {
         </div>
         <div className="flex justify-end items-center mt-4">
           <Button className="bg-green-900 text-white" type="submit">
-            GUARDAR FACTURA
+            GUARDAR PEDIDO
           </Button>
         </div>
       </form>
+      <RegisterArticuloModal open={open} handleOpen={handleOpen} />
     </>
   );
 };

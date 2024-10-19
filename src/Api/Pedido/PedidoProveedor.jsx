@@ -26,5 +26,20 @@ async function apiSavePedidoProveedor(pedidoProveedor) {
     );
     return result;
   }
+  async function apiConfirmarPedidoProveedor(pedidoProveedor) {
+    const token = localStorage.getItem("token");
+    const result = await fetch(
+      urlBackend+"pedido/proveedor/confirmar",
+      {
+        method: "PUT",
+        body:JSON.stringify(pedidoProveedor),
+        headers:{
+            "Authorization":"Bearer "+token,
+            "Content-type":"application/json"
+        }
+      }
+    );
+    return result;
+  }
 
-  export {apiSavePedidoProveedor,apiListadoPedidoProveedor}
+  export {apiSavePedidoProveedor,apiListadoPedidoProveedor,apiConfirmarPedidoProveedor}

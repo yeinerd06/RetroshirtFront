@@ -7,6 +7,7 @@ import { ThemeProvider } from "@material-tailwind/react";
 import { MaterialTailwindControllerProvider } from "@/context";
 import "./css/tailwind.css";
 import { VerificarToken } from "./Security/VerificarToken";
+import { EmpresaProvider } from "./context/EmpresaContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -14,7 +15,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <ThemeProvider>
         <MaterialTailwindControllerProvider>
           <VerificarToken/>
+          <EmpresaProvider>
           <App />
+          </EmpresaProvider>
+          
           
         </MaterialTailwindControllerProvider>
       </ThemeProvider>

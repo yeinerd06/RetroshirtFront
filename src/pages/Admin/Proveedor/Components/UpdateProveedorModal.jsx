@@ -127,7 +127,7 @@ const UpdateUserModal = ({ openUpdate, handleOpenUpdate, user }) => {
       {loading && (
         <Loader />
       )}
-      <DialogHeader className="bg-blue-900 text-white uppercae">Actualizar Proveedor</DialogHeader>
+      <DialogHeader className="bg-blue-900 text-white uppercase">Actualizar Proveedor</DialogHeader>
       <form onSubmit={handleRegister}>
         <DialogBody divider style={{ maxHeight: '70vh', overflowY: 'auto' }}>
           

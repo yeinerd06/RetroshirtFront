@@ -27,14 +27,14 @@ import AdminDevolucion from "./pages/Admin/Devoluciones/Devolucion";
 import AdminProveedor from "./pages/Admin/Proveedor/Proveedor";
 import Compra from "./pages/Admin/Proveedor/Components/Compra";
 import InformeCaja from "./pages/Admin/InformeCaja/InformeCaja";
-import CompraUpdate from "./pages/Admin/Proveedor/Components/CompraUpdate";
 import HomeRetroShirt from "./pages/Home/Home";
 import { LoginFramer } from "./pages/auth/LoginFramer";
 import { ResetPassword } from "./pages/auth/ResetPassword";
 import ProductGrid from "./pages/Home/Productos";
 import Inicio from "./pages/Admin/Inicio/Inicio";
-import ProductoProveedor from "./pages/Admin/Proveedor/Components/ProductoProveedor";
-import ProveedorPedidos from "./pages/Admin/Proveedor/Pedidos/ProveedorPedidos";
+import ProductoProveedor from "./pages/Admin/Proveedor/PoductosProveedor/ProductoProveedor";
+import ProveedorPedidos from "./pages/Admin/Proveedor/ListaPedidosProveedor/ProveedorPedidos";
+import ProveedorPedidoConfirmar from "./pages/Admin/Proveedor/Confirmar/ProveedorPedidoConfirmar";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -110,8 +110,15 @@ export const routes = [
       {
         icon: "",
         name: "proveedor",
-        path: "/proveedor/compra/:id",
+        path: "/proveedor/:id/pedido",
         element: <Compra />,
+
+      },
+      {
+        icon: "",
+        name: "proveedor",
+        path: "/proveedor/:id/pedido/:idPedido/confirmar",
+        element: <ProveedorPedidoConfirmar />,
 
       },
       {
@@ -121,27 +128,27 @@ export const routes = [
         element: <ProductoProveedor />,
 
       },
-      {
-        icon: "",
-        name: "facturación",
-        path: "/facturacion/factura/:id",
-        element: <DetallesFactura />,
+      // {
+      //   icon: "",
+      //   name: "facturación",
+      //   path: "/facturacion/factura/:id",
+      //   element: <DetallesFactura />,
 
-      },
-      {
-        icon: "",
-        name: "proveedor",
-        path: "/proveedor/compra/:id/actualizar",
-        element: <CompraUpdate />,
+      // },
+      // {
+      //   icon: "",
+      //   name: "proveedor",
+      //   path: "/proveedor/compra/:id/actualizar",
+      //   element: <CompraUpdate />,
 
-      },
-      {
-        icon: "",
-        name: "venta",
-        path: "/facturacion/venta",
-        element: <Venta />,
+      // },
+      // {
+      //   icon: "",
+      //   name: "venta",
+      //   path: "/facturacion/venta",
+      //   element: <Venta />,
 
-      }
+      // }
     ]
   },
   {
@@ -238,7 +245,7 @@ export const routes = [
       {
         icon: "",
         name: "proveedor",
-        path: "/proveedor/compra/:id",
+        path: "/proveedor/:id/pedido",
         element: <Compra />,
 
       },
