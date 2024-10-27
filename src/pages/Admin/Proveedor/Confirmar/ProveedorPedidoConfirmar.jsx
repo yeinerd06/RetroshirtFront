@@ -36,8 +36,8 @@ const ProveedorPedidoConfirmar = () => {
       setPedidoPendiente(pedidoEncontrado);
       setCodigoFactura(pedidoEncontrado?.codigoFactura);
       setValorFactura(pedidoEncontrado?.total);
-      setFechaPedido(pedidoEncontrado?.fechaPedido.split("T")[0]);
-      setFechaEntrega(pedidoEncontrado?.fechaEntrega.split("T")[0]);
+      setFechaPedido(pedidoEncontrado?.fechaPedido?.split("T")[0]);
+      setFechaEntrega(pedidoEncontrado?.fechaEntrega?.split("T")[0]);
       setNota(pedidoEncontrado?.nota);
     }
   }, [proveedoresPedidos, idPedido]);
@@ -84,12 +84,14 @@ const ProveedorPedidoConfirmar = () => {
     // Actualizar el pedido con el campo "devolucion" si hubo una devolución
     const pedidoActualizado = {
       ...pedidoPendiente,
+      total:valorFactura,
+      codigoFactura:codigoFactura,
       devolucion: huboDevolucion ? true : false, // Añadir el campo devolucion
     };
 
     // Mostrar el pedido actualizado en consola
     console.log("Pedido actualizado:", pedidoActualizado);
-
+    setLoading(true)
     setError("");
     apiConfirmarPedidoProveedor(pedidoActualizado)
       .then((res) => res.json())
@@ -101,6 +103,7 @@ const ProveedorPedidoConfirmar = () => {
           alertify.success("Pedido confirmado con éxito");
           navigate(-1);
         }else{
+
           alertify.error(data.message);
         }
       })
@@ -182,15 +185,15 @@ const ProveedorPedidoConfirmar = () => {
               disabled
             />
           </div>
-          <div className="mt-4">
+          {/* <div className="mt-4">
             <label className="mr-2">Fecha de Entrega</label>
             <Input
               type="date"
               value={fechaEntrega}
               onChange={(e) => setFechaEntrega(e.target.value)}
-              disabled
+              
             />
-          </div>
+          </div> */}
         </div>
         <div className="mt-4">
           <Textarea

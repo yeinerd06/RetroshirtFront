@@ -304,7 +304,7 @@ const UpdateArticuloModal = ({ open, handleOpen, articulo }) => {
             />
           </div>
 
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <Input
               label="Cantidad Mínima"
               name="cantidadMinima"
@@ -314,7 +314,7 @@ const UpdateArticuloModal = ({ open, handleOpen, articulo }) => {
               min={1}
               required
             />
-          </div>
+          </div> */}
           <div className="mb-4">
             <label className="inline-flex items-center">
               <input

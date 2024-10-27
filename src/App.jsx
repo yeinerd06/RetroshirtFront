@@ -8,6 +8,7 @@ import { ProductoProvider } from "./context/ProductoContext";
 import DashboardEstampador from "./layouts/DashboardEstampador";
 import DashboardAuxiliar from "./layouts/DashboardAuxiliar";
 import { ProveedorProvider } from "./context/ProveedorContext";
+import { EmpresaProvider } from "./context/EmpresaContext";
 
 function App() {
   return (
@@ -18,7 +19,9 @@ function App() {
           <ProveedorProvider>
             <UserProvider>
               <ProductoProvider>
-                <DashboardAdmin />
+                <EmpresaProvider>
+                  <DashboardAdmin />
+                </EmpresaProvider>
               </ProductoProvider>
             </UserProvider>
           </ProveedorProvider>
@@ -29,8 +32,8 @@ function App() {
         element={
           <ProveedorProvider>
             <UserProvider>
-            <ProductoProvider>
-              <DashboardAlmacenista />
+              <ProductoProvider>
+                <DashboardAlmacenista />
               </ProductoProvider>
             </UserProvider>
           </ProveedorProvider>

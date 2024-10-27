@@ -1,10 +1,7 @@
-import {
-  PlusIcon,
-  TrashIcon,
-  InformationCircleIcon,
-} from "@heroicons/react/24/solid";
+import { PlusIcon } from "@heroicons/react/24/solid";
 import {
   Button,
+  Dialog,
   DialogBody,
   IconButton,
   Typography,
@@ -20,6 +17,7 @@ import DatosProveedor from "../Components/DatosProveedor";
 import RegisterArticuloModal from "../../Inventario/Components/RegisterArticuloModal";
 import { apiSaveProveedorArticulo } from "@/Api/Proveedor/Proveedor";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import ColorSmall from "@/Global/ColorSmall";
 
 const ProductoProveedor = () => {
   const { id } = useParams();
@@ -30,13 +28,18 @@ const ProductoProveedor = () => {
   const [productosProveedor, setProductosProveedor] = useState([]);
   const [mensaje, setMensaje] = useState("");
   const [open, setOpen] = useState(false);
+  const [openProductoModal, setOpenProductoModal] = useState(false);
+  const [precioCompra, setPrecioCompra] = useState(null);
   const handleOpen = () => setOpen(!open);
+  const handleProductoModalOpen = () =>{
+    setMensaje("");
+    setOpenProductoModal(!openProductoModal);}
   const navigate = useNavigate();
+
   useEffect(() => {
     if (proveedores) {
       const proveedor = proveedores.find((p) => p.id === Number(id));
       if (proveedor) {
-        console.log(proveedor);
         setProveedor(proveedor);
         setProductosProveedor(proveedor.productos || []);
       }
@@ -52,6 +55,14 @@ const ProductoProveedor = () => {
       setMensaje("Debes seleccionar un producto.");
       return;
     }
+    setOpenProductoModal(true); // Abrir modal para ingresar el precio de compra
+  };
+
+  const handleGuardarProducto = () => {
+    if (precioCompra <= 0) {
+      setMensaje("Debes ingresar un precio de compra válido.");
+      return;
+    }
 
     setLoading(true);
     const proveedorArticulo = {
@@ -59,20 +70,22 @@ const ProductoProveedor = () => {
       articulo: {
         id: selectedProducto.value,
       },
+      precioCompra: precioCompra,
     };
+
     apiSaveProveedorArticulo(proveedorArticulo)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          //setProductosProveedor((prev) => [...prev, data.data]);
           setSelectedProducto(null); // Limpiar selección
           setMensaje("");
+          setPrecioCompra(null); // Limpiar el precio ingresado
+          setOpenProductoModal(false); // Cerrar modal
 
           const updatedProveedor = {
             ...proveedor,
             productos: [...productosProveedor, data.data],
           };
-          console.log(updatedProveedor);
           setProveedores((prev) =>
             prev.map((p) => (p.id === proveedor.id ? updatedProveedor : p))
           );
@@ -108,9 +121,7 @@ const ProductoProveedor = () => {
 
   const productosOptions = articulos.map((producto) => ({
     value: producto.id,
-    label: ` ${producto.nombre} - ${
-      producto.categoria?.nombre
-    } - $${producto.precio.toFixed(2)}`,
+    label: ` ${producto.nombre} - ${producto.categoria?.nombre}`,
     precio: producto.precio,
     articulo: producto,
   }));
@@ -146,9 +157,17 @@ const ProductoProveedor = () => {
                   onChange={handleProductoChange}
                   placeholder="Buscar producto"
                   className="w-full"
-                  noOptionsMessage={() => <Button type="button" onClick={handleOpen} color="green" size="sm" className="text-white">Registrar Articulo</Button>}
-           
-
+                  noOptionsMessage={() => (
+                    <Button
+                      type="button"
+                      onClick={handleOpen}
+                      color="green"
+                      size="sm"
+                      className="text-white"
+                    >
+                      Registrar Articulo
+                    </Button>
+                  )}
                 />
               </div>
               <IconButton
@@ -159,14 +178,10 @@ const ProductoProveedor = () => {
               </IconButton>
             </div>
 
-            {mensaje && (
-              <div className="mt-1 mb-1">
-                <p className="text-center text-red-600">{mensaje}</p>
-              </div>
-            )}
-            
             <div className="mt-6">
-            <strong className="text-gray-900"><strong >Productos relacionados con el Proveedor:</strong></strong>
+              <strong className="text-gray-900">
+                <strong>Productos relacionados con el Proveedor:</strong>
+              </strong>
               <table className="w-full min-w-[640px] table-auto border-collapse">
                 <thead className="bg-blue-900 text-white">
                   <tr>
@@ -174,10 +189,8 @@ const ProductoProveedor = () => {
                       "Imagen",
                       "Nombre",
                       "Categoría",
-                      "Min",
-                      "Stock",
-                      "Precio",
-                      "Disponible",
+                      "Genero",
+                      "Precio Compra",
                     ].map((el) => (
                       <th
                         key={el}
@@ -233,22 +246,12 @@ const ProductoProveedor = () => {
                         </td>
                         <td className="py-3 px-5">
                           <Typography className="text-xs font-medium text-blue-gray-900">
-                            {producto.articulo.cantidadMinima}
+                            {formatCurrency(producto.articulo.genero)}
                           </Typography>
                         </td>
                         <td className="py-3 px-5">
                           <Typography className="text-xs font-medium text-blue-gray-900">
-                            {producto.articulo.stock}
-                          </Typography>
-                        </td>
-                        <td className="py-3 px-5">
-                          <Typography className="text-xs font-medium text-blue-gray-900">
-                            {formatCurrency(producto.articulo.precio)}
-                          </Typography>
-                        </td>
-                        <td className="py-3 px-5">
-                          <Typography className="text-xs font-medium text-blue-gray-900">
-                            {producto.articulo.estado ? "Sí" : "No"}
+                            {formatCurrency(producto.precioCompra)}
                           </Typography>
                         </td>
                       </tr>
@@ -261,6 +264,65 @@ const ProductoProveedor = () => {
         </DialogBody>
       </div>
       <RegisterArticuloModal open={open} handleOpen={handleOpen} />
+      <Dialog
+        open={openProductoModal}
+        handler={handleProductoModalOpen}
+        size="lg"
+      >
+        <DialogBody>
+          {selectedProducto && (
+            <div className="p-6 space-y-4">
+              <div className="flex items-center space-x-4">
+                {selectedProducto.articulo.imagen ? (
+                  <img
+                    src={selectedProducto.articulo.imagen}
+                    alt={selectedProducto.articulo.nombre}
+                    className="w-20 h-20 object-cover"
+                  />
+                ) : (
+                  <span className="text-gray-400">Sin imagen</span>
+                )}
+                <div>
+                  <Typography variant="h6">{selectedProducto.label}</Typography>
+                  <Typography variant="subtitle2">
+                    Categoría:{" "}
+                    {selectedProducto.articulo.categoria?.nombre ||
+                      "Sin categoría"}
+                  </Typography>
+                  <Typography variant="subtitle2">
+                    Género: {selectedProducto.articulo.genero || "Sin género"}
+                  </Typography>
+                </div>
+              </div>
+              <div>
+                <label htmlFor="precioCompra" className="block font-medium">
+                  Precio de Compra
+                </label>
+                <input
+                  id="precioCompra"
+                  type="number"
+                  value={precioCompra}
+                  onChange={(e) => setPrecioCompra(e.target.value)}
+                  className="border p-2 w-full"
+                />
+              </div>
+              {mensaje && (
+                <div className="mt-1 mb-1">
+                  <p className="text-center text-red-600">{mensaje}</p>
+                </div>
+              )}
+              <div className="flex justify-end space-x-4">
+                <Button color="red" onClick={handleProductoModalOpen}>
+                  Cancelar
+                </Button>
+                <Button color="green" onClick={handleGuardarProducto}>
+                  Guardar Producto
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogBody>
+      </Dialog>
     </div>
   );
 };

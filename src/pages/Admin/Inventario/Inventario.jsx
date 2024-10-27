@@ -167,8 +167,7 @@ const AdminInventario = () => {
                 {[
                   "Nombre",
                   "Categoria",
-                  "Min",
-                  "Stock",
+                  // "Stock",
                   "Precio de venta",
                   "Disponible",
                   "Acciones",
@@ -215,32 +214,29 @@ const AdminInventario = () => {
                       {articulo?.categoria?.nombre}
                       <p className="text-sm"> {articulo?.genero}</p>
                     </td>
-                    <td className="py-3 px-5">{articulo?.cantidadMinima}</td>
-                    <td className="py-3 px-5">
+                    {/* <td className="py-3 px-5">
                       {articulo?.colores?.map((colorArticulo) => (
                         <div key={colorArticulo.color.id} className="mb-4">
-                          {/* Mostrar el nombre del color y el ícono del color */}
                           <div className="flex items-center mb-2">
                             
                             <ColorSmall
                               color={colorArticulo.color.color}
                               className="ml-2"
-                            /><span className="font-bold text-sm ml-2">
+                            /><span className="font-bold  text-xs ml-2">
                             {colorArticulo.color.nombre}
                           </span>
                           </div>
 
-                          {/* Mostrar las tallas y el stock en una tabla o lista más estructurada */}
                           <div className="ml-4">
                             <table className="min-w-full table-auto border border-gray-300 text-sm">
                               
                               <tbody>
                                 {colorArticulo?.tallas?.map((talla) => (
-                                  <tr key={talla.id}>
-                                    <td className="py-1 px-3 border-b">
+                                  <tr key={talla.id} className="text-xs">
+                                    <td className="py-1 px-1 border">
                                       {talla.talla.nombre}
                                     </td>
-                                    <td className="py-1 px-3 border-b">
+                                    <td className="py-1 px-3 border">
                                       {talla.stock}
                                     </td>
                                   </tr>
@@ -250,7 +246,7 @@ const AdminInventario = () => {
                           </div>
                         </div>
                       ))}
-                    </td>
+                    </td> */}
 
                     <td className="py-3 px-5">{articulo?.precio}</td>
                     <td className="py-3 px-5">

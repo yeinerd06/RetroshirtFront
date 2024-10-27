@@ -55,7 +55,7 @@ const TablaProductos = ({ productos, onProductoUpdate }) => {
             <th className="py-2 px-4 border-b">Color</th>
             <th className="py-2 px-4 border-b">Talla</th>
             <th className="py-2 px-4 border-b">Cantidad</th>
-            <th className="py-2 px-4 border-b">Acción</th>
+            <th className="py-2 px-4 border-b">Devolución</th>
           </tr>
         </thead>
         <tbody>

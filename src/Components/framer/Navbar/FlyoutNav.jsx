@@ -34,8 +34,6 @@ const LINKS = [
   //   href: "/trabaja-con-nosotros",
   //   // component: CareersContent,
   // },
-
- 
 ];
 
 const NavBarFlyOut = () => {
@@ -53,7 +51,7 @@ const NavBarFlyOut = () => {
         <div className="absolute  inset-0 z-0 bg-gradient-to-b from-neutral-950/90 to-neutral-950/0" />
       </div>
       <div className="min-h-[98px]"></div>
-    
+
       <div className=" bg-neutral-50" />
     </>
   );
@@ -78,9 +76,13 @@ const FlyoutNav = () => {
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between">
-       <Link to={"/inicio"} className="flex items-center gap-2 text-blod text-2xl font-semibold">
-       <Brand />RETRO SHIRT
-       </Link>
+        <Link
+          to={"/inicio"}
+          className="flex items-center gap-2 text-blod text-2xl font-semibold"
+        >
+          <Brand />
+          RETRO SHIRT
+        </Link>
         <div className="hidden gap-6 lg:flex">
           <Links />
           <CTAs />
@@ -123,11 +125,14 @@ const Links = () => {
   return (
     <div className="flex items-center gap-6">
       {LINKS.map((l) => (
-     
-         <Link to={l.href}  className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700" key={l.text} FlyoutContent={l.component} >
-            {l.text}
-         </Link>
-    
+        <Link
+          to={l.href}
+          className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700"
+          key={l.text}
+          FlyoutContent={l.component}
+        >
+          {l.text}
+        </Link>
       ))}
     </div>
   );
@@ -174,7 +179,6 @@ const NavLink = ({ children, href, FlyoutContent }) => {
 };
 
 const CTAs = () => {
-
   return (
     <div className="flex items-center gap-3">
       {/* <Link href={"/iniciar-sesion"}>
@@ -185,9 +189,7 @@ const CTAs = () => {
       </Link> */}
       <Link to={"/inicio/login"}>
         <button className="flex items-center gap-2  border-2 border-gray-100  px-4 py-2 font-semibold transition-colors hover:border-indigo-600 hover:bg-white hover:text-black">
-          
-        <FaUserAlt />
-       
+          <FaUserAlt />
         </button>
       </Link>
       {/* <Link href={"/iniciar-sesion"} title="Iniciar Sesión">
@@ -197,7 +199,6 @@ const CTAs = () => {
        
         </button>
         </Link> */}
-    
     </div>
   );
 };
@@ -371,16 +372,16 @@ const MobileMenuLink = ({ children, href, FoldContent, setMenuOpen }) => {
   return (
     <div className="relative text-neutral-950">
       <Link
-          onClick={(e) => {
-            e.stopPropagation();
-            setMenuOpen(false);
-          }}
-          to={href}
-          className="flex w-full cursor-pointer items-center justify-between border-b border-neutral-300 py-6 text-start text-2xl font-semibold"
-        >
-          <span>{children}</span>
-          <FiArrowRight />
-        </Link>
+        onClick={(e) => {
+          e.stopPropagation();
+          setMenuOpen(false);
+        }}
+        to={href}
+        className="flex w-full cursor-pointer items-center justify-between border-b border-neutral-300 py-6 text-start text-2xl font-semibold"
+      >
+        <span>{children}</span>
+        <FiArrowRight />
+      </Link>
       {FoldContent && (
         <motion.div
           initial={false}
@@ -415,9 +416,13 @@ const MobileMenu = () => {
             className="fixed left-0 top-0 flex h-screen w-full flex-col bg-white"
           >
             <div className="flex items-center bg-blue-900 justify-between p-6">
-              <Link href={"/"} className="flex items-center gap-2 text-blod text-2xl font-semibold">
-              <Brand />RETRO SHIRT
-                          </Link>
+              <Link
+                href={"/"}
+                className="flex items-center gap-2 text-blod text-2xl font-semibold"
+              >
+                <Brand />
+                RETRO SHIRT
+              </Link>
               <button onClick={() => setOpen(false)}>
                 <FiX className="text-3xl text-neutral-950" />
               </button>
@@ -430,13 +435,23 @@ const MobileMenu = () => {
                   FoldContent={l.component}
                   setMenuOpen={setOpen}
                 >
-                 
                   {l.text}
                 </MobileMenuLink>
               ))}
+               <MobileMenuLink
+                  key={"Inicar Sesion"}
+                  href={"/inicio/login"}
+                  setMenuOpen={setOpen}
+                >
+                  Inicar Sesion
+                </MobileMenuLink>
+              
             </div>
-            <div className="flex text-white justify-end bg-blue-900 p-6"  onClick={() => setOpen(false)}>
-              <CTAs  />
+            <div
+              className="flex text-white justify-end bg-blue-900 p-6"
+              onClick={() => setOpen(false)}
+            >
+              {/* <CTAs  /> */}
             </div>
           </motion.nav>
         )}
@@ -446,5 +461,3 @@ const MobileMenu = () => {
 };
 
 export default NavBarFlyOut;
-
-

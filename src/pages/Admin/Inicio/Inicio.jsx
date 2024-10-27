@@ -43,11 +43,9 @@ const ListadoConBoton = ({ title, items, onAddClick, renderItem }) => (
     <CardBody>
       <div className="flex justify-between items-center">
         <Typography variant="h5" className="mb-4 font-bold">{title}</Typography>
-        {!title.includes("Tallas") &&(
-           <IconButton className="bg-blue-900 hover:bg-blue-700" onClick={onAddClick}>
+        <IconButton className="bg-blue-900 hover:bg-blue-700" onClick={onAddClick}>
            <PlusIcon className="h-5 w-5 text-white" />
          </IconButton>
-        )}
        
       </div>
       <ul className="space-y-2">

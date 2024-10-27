@@ -1,6 +1,4 @@
 import { apiListadoArticulos } from "@/Api/Articulo/Articulo";
-import { apiListadoFacturas } from "@/Api/Factura/Factura";
-import { apiListadoInformeCaja } from "@/Api/Informe/InformeFactura";
 import { apiListadoProveedores } from "@/Api/Proveedor/Proveedor";
 import { apiListadoRoles } from "@/Api/Usuarios/Roles";
 import { apiListadoUsuarios } from "@/Api/Usuarios/Usuarios";
@@ -58,48 +56,7 @@ export const UserProvider = ({ children }) => {
       console.log(error);
     }
   };
-  const listadoFacturas = async () => {
-    try {
-      const response = await apiListadoFacturas();
-      const data = await response.json();
-      console.log(data.data)
-      if (modulo !== "admin") {
-        let tipoFactura = "";
-        switch (modulo) {
-          case "almacenista":
-            tipoFactura = "COMPRA";
-            break;
-          case "vendedor":
-            tipoFactura = "VENTA";
-            break;
-          default:
-            break;
-        }
-        console.log(tipoFactura)
-        const filteredFacturas = data.data.filter((factura) => {
-          return factura.tipoFactura.nombre === tipoFactura;
-        });
-
-        setFacturas(filteredFacturas.reverse());
-      } else {
-        setFacturas(data.data.reverse());
-      }
-
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const listadoInformesCaja = async () => {
-    try {
-      const response = await apiListadoInformeCaja();
-      const data = await response.json();
-
-      setInformesCaja(data.data.reverse());
-    } catch (error) {
-      console.log(error);
-    }
-  };
+ 
 
   useEffect(() => {
     if (modulo === "admin") {
@@ -159,7 +116,6 @@ export const UserProvider = ({ children }) => {
         facturas, setFacturas,
         proveedores, setProveedores,
         informesCaja, setInformesCaja,
-        listadoFacturas,
         loading, setLoading
 
       }}

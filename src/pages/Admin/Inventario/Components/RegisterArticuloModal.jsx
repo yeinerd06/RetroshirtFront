@@ -50,7 +50,7 @@ const RegisterArticuloModal = ({ open, handleOpen }) => {
       nombre: "",
       marca: "",
       precio: "",
-      cantidadMinima: "",
+      cantidadMinima: 5,
       stock: 0,
       categoria: "",
       imagen: null,
@@ -287,7 +287,7 @@ const RegisterArticuloModal = ({ open, handleOpen }) => {
             />
           </div>
 
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <Input
               label="Cantidad Mínima"
               name="cantidadMinima"
@@ -297,7 +297,7 @@ const RegisterArticuloModal = ({ open, handleOpen }) => {
               min={1}
               required
             />
-          </div>
+          </div> */}
 
           {/* Selector de colores para ArticuloColores */}
           <div className="mb-4 flex gap-4">
@@ -353,7 +353,7 @@ const RegisterArticuloModal = ({ open, handleOpen }) => {
           {/* Imagen, Mensaje y Botones */}
           <div className="mb-4">
             <Input
-              label="Imagen"
+              label="Imagen Principal"
               type="file"
               onChange={handleImageChange}
               required

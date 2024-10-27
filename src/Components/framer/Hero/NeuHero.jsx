@@ -10,9 +10,15 @@ import {
   SiReebok,
   SiNewbalance,
   SiFila,
+  SiSublimetext,
+  SiCoveralls,
 } from "react-icons/si";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { FaShippingFast, FaTshirt } from "react-icons/fa";
+import { IoIosShirt } from "react-icons/io";
+import { MdDesignServices, MdOutlineDesignServices, MdPrint } from "react-icons/md";
+import { FaLocationDot } from "react-icons/fa6";
 
 export const NeuHero = () => {
   return (
@@ -118,13 +124,14 @@ const TranslateWrapper = ({ children, reverse }) => {
     <motion.div
       initial={{ translateX: reverse ? "-100%" : "0%" }}
       animate={{ translateX: reverse ? "0%" : "-100%" }}
-      transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
+      transition={{ duration: 50, repeat: Infinity, repeatType: "loop", ease: "linear" }}
       className="flex px-2"
     >
       {children}
     </motion.div>
   );
 };
+
 
 const LogoItem = ({ Icon, name }) => {
   return (
@@ -139,30 +146,31 @@ const LogoItem = ({ Icon, name }) => {
 
 const LogoItemsTop = () => (
   <>
-    <LogoItem Icon={SiNike} name="Nike" />
-    <LogoItem Icon={SiAdidas} name="Adidas" />
-    <LogoItem Icon={SiPuma} name="Puma" />
-    <LogoItem Icon={SiUnderarmour} name="Under Armour" />
-    <LogoItem Icon={SiReebok} name="Reebok" />
-    <LogoItem Icon={SiNewbalance} name="New Balance" />
-    <LogoItem Icon={SiFila} name="Fila" />
-    <LogoItem Icon={SiNike} name="Nike" />
-    <LogoItem Icon={SiAdidas} name="Adidas" />
+  <LogoItem Icon={FaTshirt} name="Camisas" />
+  <LogoItem Icon={MdPrint} name="Estampados" />
+  <LogoItem Icon={IoIosShirt} name="Camisetas" />
+  <LogoItem Icon={SiCoveralls} name="Logos" />
+  <LogoItem Icon={MdDesignServices} name="Diseños Unicos" />
+  <LogoItem Icon={SiSublimetext} name="Sublimados" />
+  <LogoItem Icon={FaTshirt} name="Camisas" />
+  <LogoItem Icon={MdPrint} name="Estampados" />
+  <LogoItem Icon={IoIosShirt} name="Camisetas" />
+  <LogoItem Icon={SiCoveralls} name="Logos" />
+  <LogoItem Icon={MdDesignServices} name="Diseños Unicos" />
+  <LogoItem Icon={SiSublimetext} name="Sublimados" />
+  
   </>
 );
 
 const LogoItemsBottom = () => (
   <>
- 
-    <LogoItem Icon={SiNike} name="Nike" />
-    <LogoItem Icon={SiAdidas} name="Adidas" />
-    <LogoItem Icon={SiPuma} name="Puma" />
-    <LogoItem Icon={SiUnderarmour} name="Under Armour" />
-    <LogoItem Icon={SiReebok} name="Reebok" />
-    <LogoItem Icon={SiNewbalance} name="New Balance" />
-    <LogoItem Icon={SiFila} name="Fila" />
-    <LogoItem Icon={SiNike} name="Nike" />
-    <LogoItem Icon={SiAdidas} name="Adidas" />
+  
+  <LogoItem Icon={MdOutlineDesignServices} name="Crea tus diseños" />
+    <LogoItem Icon={FaShippingFast} name="Envios a todo el pais" />
+    <LogoItem Icon={FaLocationDot} name="Cúcuta, Norte de Santander" />
+    <LogoItem Icon={MdOutlineDesignServices} name="Crea tus diseños" />
+    <LogoItem Icon={FaShippingFast} name="Envios a todo el pais" />
+    <LogoItem Icon={FaLocationDot} name="Cúcuta, Norte de Santander" />
     
    
   </>

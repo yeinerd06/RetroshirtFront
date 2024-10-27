@@ -43,7 +43,7 @@ function MenuProveedor() {
             value="pedidos-proveedores"
             onClick={() => handleTabChange("pedidos-proveedores")}
           >
-            PEDIDOS PROVEEDORES
+            PEDIDOS 
           </Tab>
         </TabsHeader>
       </Tabs>

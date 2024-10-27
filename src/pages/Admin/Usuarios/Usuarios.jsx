@@ -6,8 +6,6 @@ import {
   CardBody,
   CardHeader,
   Typography,
-  Select,
-  Option,
   IconButton,
 } from "@material-tailwind/react";
 import RegisterUserModal from "./Components/RegisterUserModal";
@@ -19,13 +17,14 @@ import "alertifyjs/build/css/alertify.css";
 import { apiDeleteUsuario } from "@/Api/Usuarios/Usuarios";
 import { Loader } from "@/Components/Loader";
 import { FaEdit } from "react-icons/fa";
+import Select from "react-select"; // Importa el Select de react-select
 
 const AdminUsuarios = () => {
-  const { usuarios, setUsuarios, roles , setLoading} = useUserContext();
+  const { usuarios, setUsuarios, roles, setLoading } = useUserContext();
   const [open, setOpen] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [user, setUser] = useState([]);
-  const [selectedRole, setSelectedRole] = useState(null); // Estado para manejar el rol seleccionado
+  const [selectedRole, setSelectedRole] = useState(null);
 
   const handleOpen = () => setOpen(!open);
 
@@ -62,9 +61,8 @@ const AdminUsuarios = () => {
     }
   };
 
-  const handleRolSelectChange = (value) => {
-    const selectedRol = roles?.find((rol) => rol?.id === parseInt(value));
-    setSelectedRole(selectedRol);
+  const handleRolSelectChange = (selectedOption) => {
+    setSelectedRole(selectedOption ? selectedOption.value : null);
   };
 
   const deleteUser = (usuario) => {
@@ -90,38 +88,37 @@ const AdminUsuarios = () => {
     console.log(selectedRole);
     console.log(usuarios);
   }, [selectedRole]);
+
   // Filtrar usuarios por rol
   const filteredUsuarios =
     selectedRole === null
       ? usuarios
-      : usuarios.filter((usuario) => usuario?.roles[0]?.id === parseInt(selectedRole?.id));
+      : usuarios.filter((usuario) => usuario?.roles[0]?.id === parseInt(selectedRole));
 
+  // Preparar opciones para el select de react-select
+  const roleOptions = [
+    ...roles?.map((rol) => ({
+      value: rol.id,
+      label: rol.nombre.split("_")[1],
+    })),
+  ];
 
   return (
-
-    < >
+    <>
       <div
         floated={false}
         shadow={false}
         color="transparent"
         className="m-0 flex items-center justify-between p-6"
       >
-
-        <div className="mb-4">
-
+        <div className="mb-4" style={{ minWidth: "200px" }}>
           <Select
-            label="Rol"
-            name="roles"
-            value={selectedRole?.id}
-            onChange={e => handleRolSelectChange(e)}
-            required
-          >
-            {roles?.map((rol) => (
-              <Option key={rol.id} value={rol.id}>
-                {rol.nombre.split("_")[1]}
-              </Option>
-            ))}
-          </Select>
+            options={roleOptions}
+            value={roleOptions.find((option) => option.value === selectedRole) || null}
+            onChange={handleRolSelectChange}
+            isClearable
+            placeholder="Seleccionar Rol"
+          />
         </div>
         <Button className="text-left flex" variant="text" size="sm" color="success" onClick={handleOpen}>
           <UserPlusIcon className="h-5 w-5 mr-2" />
@@ -173,17 +170,8 @@ const AdminUsuarios = () => {
                   </td>
                   <td className="py-3 px-5">
                     <IconButton className="bg-yellow-900 hover:bg-yellow-700" onClick={() => handleOpenUpdate(usuario)}>
-                    <FaEdit className="text-xl" />
+                      <FaEdit className="text-xl" />
                     </IconButton>
-                    {/* <div className="flex space-x-2">
-
-                      <PencilSquareIcon title="EDITAR USUARIO"
-                        className="w-5 h-5 text-yellow-700 cursor-pointer hover:text-yellow-900 " onClick={() => handleOpenUpdate(usuario)} />
-
-                      <Button size="sm" color="white" onClick={() => handleOpenDelete(usuario)}>
-                  <TrashIcon className="w-5 h-5 text-red-900" />
-                </Button>
-                    </div> */}
                   </td>
                 </tr>
               ))}
@@ -193,9 +181,7 @@ const AdminUsuarios = () => {
       </div>
       <RegisterUserModal open={open} handleOpen={handleOpen} />
       <UpdateUserModal openUpdate={openUpdate} handleOpenUpdate={handleOpenUpdate} user={user} />
-
     </>
-
   );
 };
 
