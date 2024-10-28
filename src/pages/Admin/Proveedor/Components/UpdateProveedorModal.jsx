@@ -7,7 +7,7 @@ import {
   DialogHeader,
   Input,
   Select,
-  Option
+  Option,
 } from "@material-tailwind/react";
 import { useUserContext } from "@/context/UserContext";
 import { Loader } from "@/Components/Loader";
@@ -16,85 +16,75 @@ import alertify from "alertifyjs";
 import "alertifyjs/build/css/alertify.css";
 import { apiUpdateProveedor } from "@/Api/Proveedor/Proveedor";
 const UpdateUserModal = ({ openUpdate, handleOpenUpdate, user }) => {
-
-
-  const { setProveedores,facturas } = useUserContext();
-  const [loading, setloading] = useState(false)
+  const { setProveedores, facturas } = useUserContext();
+  const [loading, setloading] = useState(false);
   const [mensaje, setMensaje] = useState("");
   const [imagen, setImagen] = useState(null);
-  const [admin,setAdmin]=useState(false)
-  const [tieneFacturas,setTieneFacturas]=useState(false)
+  const [admin, setAdmin] = useState(false);
+  const [tieneFacturas, setTieneFacturas] = useState(false);
   const [formData, setFormData] = useState({
-
     nombre: "",
     apellido: "",
     email: "",
   });
   useEffect(() => {
     if (!openUpdate) {
-      setMensaje("")
-      setImagen(null)
+      setMensaje("");
+      setImagen(null);
       setFormData({
         nombre: "",
         apellido: "",
         email: "",
-      })
+      });
     } else {
       setFormData({
-        id:user?.id,
+        id: user?.id,
         nombre: user?.nombre,
         apellido: user?.apellido,
         email: user?.email,
-        estado:user?.estado,
-        documento:user?.documento,
-        direccion:user?.direccion,
-        barrio:user?.barrio,
-        telefono:user?.telefono
-      })
-      setTieneFacturas(buscarSiTieneFacturas())
+        estado: user?.estado,
+        documento: user?.documento,
+        direccion: user?.direccion,
+        barrio: user?.barrio,
+        telefono: user?.telefono,
+      });
+      setTieneFacturas(buscarSiTieneFacturas());
     }
-
-    
-  }, [openUpdate])
+  }, [openUpdate]);
 
   const buscarSiTieneFacturas = () => {
-    return facturas.some(factura => factura?.proveedor?.id === user.id);
+    return facturas.some((factura) => factura?.proveedor?.id === user.id);
   };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
-        ...prevData,
-        [name]: type === "checkbox" ? checked : value
+      ...prevData,
+      [name]: type === "checkbox" ? checked : value,
     }));
-};
-
- 
+  };
 
   const handleRegister = (e) => {
     e.preventDefault();
     console.log("User:", user);
     console.log("Datos del formulario:", formData);
-    
 
-
-    setloading(true)
+    setloading(true);
     apiUpdateProveedor(formData)
-      .then(res => res.json())
-      .then(data => {
-        console.log(data)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
         if (data.success) {
-          setProveedores(prevUsuarios => {
-            // Actualiza la lista de semestres con el semestre actualizado
-            return prevUsuarios.map(prevUsuario => {
-              // Si el semestre actualizado tiene el mismo ID que el semestre existente, devolver el semestre actualizado
-              if (prevUsuario.id === data?.data?.id) {
+          setProveedores((prevProveedores) => {
+            console.log(prevProveedores);
+            return prevProveedores.map((prevProveedor) => {
+              if (prevProveedor.id === Number(data.data.id)) {
                 return data.data;
               } else {
-                return prevUsuario; // Devuelve el semestre existente sin cambios
+                return prevProveedor;
               }
             });
-          })
+          });
 
           handleOpenUpdate();
           setFormData({
@@ -102,12 +92,12 @@ const UpdateUserModal = ({ openUpdate, handleOpenUpdate, user }) => {
             nombre: "",
             apellido: "",
             correo: "",
-            contraseña: ""
+            contraseña: "",
           });
           setImagen(null);
           alertify.success("Usuario actualizado");
         } else {
-          setMensaje(data.mensaje)
+          setMensaje("Error actualizando proveedor verifique sus datos");
         }
       })
       .catch((e) => {
@@ -116,22 +106,21 @@ const UpdateUserModal = ({ openUpdate, handleOpenUpdate, user }) => {
       .finally(() => {
         setloading(false);
       });
-
-
-
-
   };
 
   return (
-    <Dialog open={openUpdate} handler={handleOpenUpdate} dismiss={{ outsidePress: false }}>
-      {loading && (
-        <Loader />
-      )}
-      <DialogHeader className="bg-blue-900 text-white uppercase">Actualizar Proveedor</DialogHeader>
+    <Dialog
+      open={openUpdate}
+      handler={handleOpenUpdate}
+      dismiss={{ outsidePress: false }}
+    >
+      <Loader loading={loading} />
+
+      <DialogHeader className="bg-blue-900 text-white uppercase">
+        Actualizar Proveedor
+      </DialogHeader>
       <form onSubmit={handleRegister}>
-        <DialogBody divider style={{ maxHeight: '70vh', overflowY: 'auto' }}>
-          
-         
+        <DialogBody divider style={{ maxHeight: "70vh", overflowY: "auto" }}>
           <div className="mb-4">
             <Input
               label="Nombre"
@@ -170,7 +159,7 @@ const UpdateUserModal = ({ openUpdate, handleOpenUpdate, user }) => {
               required
             />
           </div>
-      
+
           <div className="mb-4">
             <Input
               label="Documento"
@@ -210,19 +199,18 @@ const UpdateUserModal = ({ openUpdate, handleOpenUpdate, user }) => {
               <span className="ml-2">ACTIVO</span>
             </label>
           </div>
-        
-
         </DialogBody>
         <div className="mb-4">
           <p className="text-center mt-3 text-red-700">{mensaje}</p>
         </div>
         <DialogFooter>
-
-
-          <Button onClick={handleOpenUpdate} className="mr-1 bg-red-900 text-white">
+          <Button
+            onClick={handleOpenUpdate}
+            className="mr-1 bg-red-900 text-white"
+          >
             <span>Cancelar</span>
           </Button>
-          <Button type="submit"  className="bg-blue-900 text-white">
+          <Button type="submit" className="bg-blue-900 text-white">
             <span>Actualizar</span>
           </Button>
         </DialogFooter>

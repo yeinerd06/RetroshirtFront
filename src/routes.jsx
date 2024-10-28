@@ -20,6 +20,7 @@ import Inicio from "./pages/Admin/Inicio/Inicio";
 import ProductoProveedor from "./pages/Admin/Proveedor/PoductosProveedor/ProductoProveedor";
 import ProveedorPedidos from "./pages/Admin/Proveedor/ListaPedidosProveedor/ProveedorPedidos";
 import ProveedorPedidoConfirmar from "./pages/Admin/Proveedor/Confirmar/ProveedorPedidoConfirmar";
+import ProveedorConfirmarDevolucion from "./pages/Admin/Proveedor/ConfirmarDevolucion/ProveedorConfirmarDevolucion";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -78,6 +79,12 @@ export const routes = [
         name: "proveedor",
         path: "/proveedor/:id/pedido/:idPedido/confirmar",
         element: <ProveedorPedidoConfirmar />,
+      },
+      {
+        icon: "",
+        name: "proveedor",
+        path: "/proveedor/:id/pedido/:idPedido/confirmar/devolucion",
+        element: <ProveedorConfirmarDevolucion />,
       },
       {
         icon: "",
@@ -155,6 +162,12 @@ export const routes = [
         name: "proveedor",
         path: "/proveedor/:id/pedido/:idPedido/confirmar",
         element: <ProveedorPedidoConfirmar />,
+      },
+      {
+        icon: "",
+        name: "proveedor",
+        path: "/proveedor/:id/pedido/:idPedido/confirmar/devolucion",
+        element: <ProveedorConfirmarDevolucion />,
       },
       {
         icon: "",

@@ -1,4 +1,4 @@
-const urlBackend="https://retroshirtback-production.up.railway.app/"
+const urlBackend="http://localhost:8080/"
 //"https://retroshirtback-production.up.railway.app/"
 //"http://localhost:8080/"
 
