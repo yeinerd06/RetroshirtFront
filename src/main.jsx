@@ -1,4 +1,3 @@
-
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
@@ -13,10 +12,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <ThemeProvider>
         <MaterialTailwindControllerProvider>
-          <VerificarToken/>
-          
+          <VerificarToken />
+
           <App />
-          
         </MaterialTailwindControllerProvider>
       </ThemeProvider>
     </BrowserRouter>

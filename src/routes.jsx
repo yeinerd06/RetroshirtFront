@@ -137,7 +137,6 @@ export const routes = [
         name: "inventario",
         path: "/inventario/articulo/:id",
         element: <ArticuloDetailView />,
-
       },
       {
         icon: <InboxArrowDownIcon {...icon} />,
