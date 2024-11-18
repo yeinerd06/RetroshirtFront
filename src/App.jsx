@@ -64,7 +64,14 @@ function App() {
         }
       />
 
-      <Route path="/inicio/*" element={<Inicio />} />
+      <Route
+        path="/inicio/*"
+        element={
+          <UserProvider>
+            <Inicio />
+          </UserProvider>
+        }
+      />
       <Route path="*" element={<Navigate to="/inicio" replace />} />
     </Routes>
   );
